@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "errors": "x Build failed in 211ms\nerror during build:\nRollupError: Could not resolve \"./assets/Flag_of_Anarcho-capitalism.png\" from \"src/components/Hero.vue\"\nfile: /home/maxycle/code/Collaborasong/frontend/src/components/Hero.vue\n    at getRollupError (file:///home/maxycle/code/Collaborasong/frontend/node_modules/rollup/dist/es/shared/parseAst.js:376:41)\n    at error (file:///home/maxycle/code/Collaborasong/frontend/node_modules/rollup/dist/es/shared/parseAst.js:372:42)\n    at ModuleLoader.handleInvalidResolvedId (file:///home/maxycle/code/Collaborasong/frontend/node_modules/rollup/dist/es/shared/node-entry.js:18923:24)\n    at file:///home/maxycle/code/Collaborasong/frontend/node_modules/rollup/dist/es/shared/node-entry.js:18883:26\n",
+  "timestamp": "2024-04-20 11:38:57",
+  "vite_ruby": "3.5.0",
+  "digest": "d006e76eb7c47823e8eef2296ace0697f2bf9124"
+}

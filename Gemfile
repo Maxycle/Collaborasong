@@ -15,6 +15,16 @@ gem "puma", "~> 5.0"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
+gem 'vite_ruby'
+
+# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
+gem "rack-cors"
+
+# Provides secure user authentication and session management [https://github.com/heartcombo/devise]
+gem 'devise' # Use a version that is compatible with Rails 7
+
+# Adds JWT token authentication and generation to Devise [https://github.com/waiting-for-dev/devise-jwt]
+gem 'devise-jwt'
 # Use Redis adapter to run Action Cable in production
 # gem "redis", "~> 4.0"
 
@@ -29,7 +39,7 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
-
+gem 'faker'
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
 # gem "image_processing", "~> 1.2"
 
@@ -45,15 +55,3 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
-gem 'vite_ruby'
-gem "devise-jwt"
-
-# Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
-gem "rack-cors"
-
-# Provides secure user authentication and session management [https://github.com/heartcombo/devise]
-gem "devise"
-
-# Adds JWT token authentication and generation to Devise [https://github.com/waiting-for-dev/devise-jwt]
-gem "devise-jwt"
