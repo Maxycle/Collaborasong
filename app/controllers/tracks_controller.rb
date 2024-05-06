@@ -7,10 +7,10 @@ class TracksController < ApplicationController
     if params[:instrument].present?
       @tracks = @tracks.joins(:instruments).where("instruments.name LIKE ?", "%#{params[:instrument]}%")
       if params[:genre].present? 
-        @tracks = @tracks.joins(:music_genres).where("genres.name LIKE ?", "%#{params[:genre]}%")
+        @tracks = @tracks.joins(:genres).where("genres.name LIKE ?", "%#{params[:genre]}%")
       end
     elsif params[:genre].present?
-      @tracks = @tracks.joins(:music_genres).where("genres.name LIKE ?", "%#{params[:genre]}%")
+      @tracks = @tracks.joins(:genres).where("genres.name LIKE ?", "%#{params[:genre]}%")
     end
 
     @tracks = @tracks.select(:id)
