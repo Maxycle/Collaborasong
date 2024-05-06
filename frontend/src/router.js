@@ -3,6 +3,7 @@ import LoginSignup from "@/pages/LoginSignup.vue"
 import Home from '@/pages/Home.vue'
 import About from '@/pages/About.vue'
 import NewProject from '@/pages/NewProject.vue'
+import NewResultTrack from '@/pages/NewResultTrack.vue'
 import Track from '@/pages/Track.vue'
 import MyTracks from '@/pages/MyTracks.vue'
 import { useSessionStore } from '@/stores/modules/sessionStore';
@@ -12,6 +13,7 @@ const routes = [
 	{ path: '/', name: 'Home', component: Home, meta: { requiresAuth: false } },
 	{ path: '/track/:zeTrackId', name: 'track', component: Track, meta: { requiresAuth: true } },
 	{ path: '/new_project', name: 'result_track', component: NewProject, meta: { requiresAuth: true } },
+	{ path: '/new_result/:zeTrackId', name: 'new_result_track', component: NewResultTrack, meta: { requiresAuth: true } },
 	{ path: '/my_own_tracks', name: 'my_tracks', component: MyTracks, meta: { requiresAuth: false } }
 ]
 
