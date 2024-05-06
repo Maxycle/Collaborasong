@@ -13,12 +13,12 @@
 						<Autocomplete heading='Track title' @item-selected="addParameters" @item-inputted="onNewItemInput" />
 						<div class="flex flex-wrap mt-2">
 							<div v-for="item in genres" :key="item">
-								<ParamButton :heading="item.name" removable @removed="removeParameters('Genre de zikmu', item)" />
+								<ParamButton :item="item" removable @removed="removeParameters('Genre de zikmu', item)" />
 							</div>
 						</div>
 						<div class="flex flex-wrap mt-2">
 							<div v-for="item in instruments" :key="item">
-								<ParamButton :heading="item.name" removable
+								<ParamButton :item="item" removable
 									@removed="removeParameters('Instrument recherchié', item)" />
 							</div>
 						</div>
