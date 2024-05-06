@@ -8,9 +8,9 @@
 			<NavBarButton :isActive="isRouteActive('/my_own_tracks')">
 				<span class="relative"><router-link to="/my_own_tracks">My tracks</router-link></span>
 			</NavBarButton>
-			<NavBarButton :isActive="isRouteActive('/my_messages')">
+			<!-- <NavBarButton :isActive="isRouteActive('/my_messages')">
 				<span class="relative"><router-link to="/my_messages">My messages</router-link></span>
-			</NavBarButton>
+			</NavBarButton> -->
 			<NavBarButton @click="redirectToEditProfile">
 				<span class="relative">Edit profile</span>
 			</NavBarButton>
@@ -38,15 +38,6 @@ axios.defaults.baseURL = 'http://localhost:3000'
 const loggedInUser = computed(() => {
 	return store.user;
 })
-
-onMounted(async () => {
-  isLoading.value = true;
-  try {
-    await store.loginUserWithToken()
-  } finally {
-    isLoading.value = false;
-  }
-});
 
 const isRouteActive = (path) => {
 	return route.path === path;
