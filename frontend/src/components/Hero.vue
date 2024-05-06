@@ -53,7 +53,6 @@ const store = useSessionStore()
 
 onMounted(() => {
 	fetchTracks(urlToFetch.value);
-	// fetchMyTracks();
 });
 
 const fetch = () => {
@@ -62,12 +61,12 @@ const fetch = () => {
 };
 
 const addQueryParamToUrl = (obj) => {
-	switch (obj.queryParam) {
+	switch (obj.header) {
 		case 'Instrument recherchié':
-			instrumentParam.value = obj.queryParamValue
+			instrumentParam.value = obj.name
 			break;
 		case 'Genre de zikmu':
-			genreParam.value = obj.queryParamValue
+			genreParam.value = obj.name
 			break;
 		case 'Où ca ??':
 			locationParam.value = obj.coordinates
