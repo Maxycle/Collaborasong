@@ -1,6 +1,6 @@
 <template>
-	<div class="flex items-center min-w-16 border text-xs m-1 px-2 rounded h-full " :class="colorClasses">
-		{{ heading }}
+	<div class="flex items-center justify-center min-w-16 border text-xs m-1 px-2 rounded h-full " :class="colorClasses">
+		{{ item.name }}
 		<button v-if="removable">
 			<CloseRound class="ml-2 w-4" @click="remove" />
 		</button>
@@ -16,9 +16,9 @@ export default {
 	},
 
 	props: {
-		heading: {
-			type: String,
-			default: 'ta mère en short',
+		item: {
+			type: Object,
+			default: {}
 		},
 		color: {
 			type: String,
@@ -83,7 +83,7 @@ export default {
 
 	methods: {
 		remove() {
-			this.$emit('removed', this.heading)
+			this.$emit('removed', this.item)
 		}
 	}
 }
