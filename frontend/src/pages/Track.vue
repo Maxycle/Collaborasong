@@ -14,7 +14,7 @@
 					trackBasicData.title
 						}}"</span></AnarcapButton>
 				<AnarcapButton class=" transition hover:translate-x-6 hover:scale-110 duration-300">
-					<span class="relative"><router-link :to="{ name: 'result_track', params: { zeTrackId: trackId } }">upload your
+					<span class="relative"><router-link :to="{ name: 'new_result_track', params: { zeTrackId: trackId } }">upload your
 							track/result</router-link></span>
 				</AnarcapButton>
 			</div>
