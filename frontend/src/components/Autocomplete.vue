@@ -9,7 +9,7 @@
 			<ul v-if="dropdownOptions.length" class="absolute z-10 mt-2 bg-white border rounded shadow-md w-full">
 				<li v-for="item in dropdownOptions" :key="item" @click="selectItem(item)" class="p-4 rounded hover:bg-blue-500">
 					<div v-if="this.heading === 'Où ca ??'">{{ item.place_name }}</div>
-					<div v-else> {{ item }}</div>
+					<div v-else> {{ item.name }}</div>
 				</li>
 			</ul>
 			<button v-else-if="selectedItem !== '' && canAddNewOption" class="p-2 mt-2 w-full bg-green-300 border border-dotted border-black rounded" @click="addNewOption">Add "{{
@@ -43,7 +43,6 @@ export default {
 			urlToFetch: '',
 			placeholder: 'ta gueule',
 			geocoderResult: [],
-			selectedItemId: undefined,
 			coordinates: []
 		};
 	},
@@ -75,7 +74,7 @@ export default {
 
 		filterItems() {
 			const query = this.selectedItem.toLowerCase();
-			this.filteredItems = query === '' ? [] : this.options.filter(item => item.name.toLowerCase().includes(query)).map(item => item.name)
+			this.filteredItems = query === '' ? [] : this.options.filter(item => item.name.toLowerCase().includes(query))
 		},
 
 		selectItem(item) {
@@ -85,16 +84,14 @@ export default {
 				this.geocoderResult = []
 				this.$emit('item-selected', { header: this.heading, coordinates: this.coordinates })
 			} else {
-				this.selectedItemId = JSON.parse(JSON.stringify(this.options)).find(obj => obj.name === item).id
-				this.$emit('item-selected', { header: this.heading, name: item, id: this.selectedItemId })
-				this.selectedItem = ''
+				this.selectedItem = item.name
+				this.$emit('item-selected', { header: this.heading, name: this.selectedItem, id: item.id })
 			}
 			this.filteredItems = []
 		},
 
 		onInput() {
 			if (this.selectedItem === '') {
-				this.selectedItemId = undefined;
 				this.filteredItems = []
 				this.$emit('item-selected', { header: this.heading, name: '', id: undefined });
 				this.$emit('item-inputted', { header: this.heading, name: '', id: undefined });
