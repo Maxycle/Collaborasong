@@ -4,7 +4,7 @@
 			<div class="w-4/5">
 				<p v-if="props.isMyTracks" class="text-2xl font-bold flex justify-center">My tracks</p>
 				<p v-else-if="props.isResult" class="text-2xl font-bold flex justify-center">People's collaborations</p>
-				<div v-if="currentTrackList.length > 0" :key="refreshFlag">
+				<div v-if="currentTrackList.length > 0">
 					<div v-for="track in currentTrackList" :key="track.id" class="">
 						<TrackCard :trackId="track.id" :parentTrackId="trackId" class="w-full my-6" />
 					</div>
@@ -40,25 +40,18 @@ const props = defineProps({
 });
 
 const storeTrack = useTrackStore();
-const storeSession = useSessionStore();
-const isMyTracks = ref(false);
 const currentTrackList = ref([]);
-const refreshFlag = ref(0);
 const initTrackListExecuted = ref(false);
+const { isLoggedIn, getAuthToken } = useSessionStore();
 
-watch(() => storeTrack.loadingData, (newValue, oldValue) => {
-	if (newValue === false && !initTrackListExecuted.value) {
-		initTrackList()
-		console.log('Loading state changed track:', newValue);
-	}
-})
-
-watch(() => storeSession.isLoggedIn, (newValue, oldValue) => {
-	if (newValue === true) {
-		initTrackList()
-		console.log('Loading state changed session:', newValue);
-	}
-})
+watch(
+  [() => isLoggedIn, () => storeTrack.loadingData, () => storeTrack.trackListIds, () => storeTrack.myTrackListIds],
+  ([loggedIn, loadingData, trackListIds, myTrackListIds]) => {
+    if (loggedIn || (!loadingData && !initTrackListExecuted.value)) {
+      initTrackList();
+    }
+  }
+);
 
 onMounted(() => {
 	initTrackList()
@@ -66,12 +59,11 @@ onMounted(() => {
 
 function initTrackList() {
 	if (props.trackId !== undefined) {
-		// initTrackListExecuted.value = false
 		fetchTrackChildrenIds(props.trackId);
 	} else {
-		currentTrackList.value = props.isMyTracks ? storeTrack.myTrackListIds : storeTrack.trackListIds;
+		currentTrackList.value = props.isMyTracks ? storeTrack.myTrackListIds : storeTrack.trackListIds
 	}
-	if (storeSession.isLoggedIn) {
+	if (isLoggedIn && !initTrackListExecuted.value) {
 		fetchMyTracks()
 		initTrackListExecuted.value = true
 	}
@@ -82,7 +74,7 @@ async function fetchTrackChildrenIds(trackId) {
 		const response = await axios.get(`/index_results/${trackId}`,
 			{
 				headers: {
-					Authorization: `${storeSession.getAuthToken}`
+					Authorization: `${getAuthToken}`
 				}
 			});
 		currentTrackList.value = response.data;
