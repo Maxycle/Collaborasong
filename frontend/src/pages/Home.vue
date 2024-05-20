@@ -1,5 +1,5 @@
 <template>
-  <Container class="overflow-y-auto">
+  <Container>
     <TrackList class="w-full"/>
   </Container>
 	<h1 class="bg-red-400">Ze HoMe !!</h1>
