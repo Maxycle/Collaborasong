@@ -12,7 +12,7 @@
 					<div v-else> {{ item.name }}</div>
 				</li>
 			</ul>
-			<button v-else-if="selectedItem !== '' && canAddNewOption" class="p-2 mt-2 w-full bg-green-300 border border-dotted border-black rounded" @click="addNewOption">Add "{{
+			<button v-else-if="selectedItem !== '' && canAddNewOption && !filteredItems.length" class="p-2 mt-2 w-full bg-green-300 border border-dotted border-black rounded" @click="addNewOption">Add "{{
 				selectedItem }}"</button>
 		</div>
 	</div>
@@ -86,6 +86,7 @@ export default {
 			} else {
 				this.selectedItem = item.name
 				this.$emit('item-selected', { header: this.heading, name: this.selectedItem, id: item.id })
+				this.selectedItem = ''
 			}
 			this.filteredItems = []
 		},
