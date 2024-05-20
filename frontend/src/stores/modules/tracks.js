@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import { useSessionStore } from '@/stores/modules/sessionStore';
 
 axios.defaults.baseURL = 'http://localhost:3000'
 
@@ -14,15 +13,14 @@ export const useTrackStore = defineStore({
 	}),
 
 	actions: {
-		async searchTracks(urlToFetch) {
-			const storeSession = useSessionStore();
+		async searchTracks(urlToFetch, authToken) {
 
 			try {
 				this.loading = true
 				const response = await axios.get(urlToFetch,
 					{
 						headers: {
-							Authorization: `${storeSession.getAuthToken}`
+							Authorization: `${authToken}`
 						}
 					});
 				const data = response.data;
