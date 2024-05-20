@@ -75,7 +75,6 @@ export const useSessionStore = defineStore({
         const res = await fetch(`${BACKEND_URL}/member-data`, {
           headers: { Authorization: token }
         })
-
         if (!res.ok) {
           const error = await res.json()
           console.log(`An error occured while logging in: ${error.message}`) // eslint-disable-line no-console
@@ -92,7 +91,7 @@ export const useSessionStore = defineStore({
 
     async logoutUser() {
       try {
-        const res = await fetch(`${BACKEND_URL}/users/sign_out`, {
+        const res = await fetch(`${BACKEND_URL}/logout`, {
           method: "DELETE",
           headers: { Authorization: this.authToken }
         })
