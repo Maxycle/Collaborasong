@@ -111,26 +111,27 @@ const sendTrackDetailsToPinia = () => {
 
 const goToConversation = async () => {
 	sendTrackDetailsToPinia();
-	if (trackData.value.isResult && !trackData.value.conversation_id) {
-		await createConversation();
-	} else if (trackData.value.isResult && trackData.value.conversation_id) {
-		router.push(`/conversation/${trackData.value.conversation_id}`);
-	}
+	// if (trackData.value.isResult && !trackData.value.conversation_id) {
+		// await createConversation();
+	// } else if (trackData.value.isResult && trackData.value.conversation_id) {
+		router.push({ name: "Chat" });
+		// router.push(`/conversation/${trackData.value.conversation_id}`);
+	// }
 };
 
-const createConversation = async () => {
-	try {
-		const newConversationResponse = await axios.post('/api/v1/conversations', {
-			conversation: {
-				music_track_id: props.trackId
-			}
-		});
-		console.log('New conversation created:', newConversationResponse.data);
-		router.push(`/conversation/${newConversationResponse.data.id}`);
-	} catch (error) {
-		console.error('Error creating or fetching conversation:', error);
-	}
-};
+// const createConversation = async () => {
+// 	try {
+// 		const newConversationResponse = await axios.post('/api/v1/conversations', {
+// 			conversation: {
+// 				music_track_id: props.trackId
+// 			}
+// 		});
+// 		router.push(`/conversation/${newConversationResponse.data.id}`);
+// 		// router.push(`/conversation/${newConversationResponse.data.id}`);
+// 	} catch (error) {
+// 		console.error('Error creating or fetching conversation:', error);
+// 	}
+// };
 
 onMounted(() => {
 	fetchTrackDetails();
