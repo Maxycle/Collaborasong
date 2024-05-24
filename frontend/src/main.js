@@ -5,8 +5,15 @@ import { createPinia } from 'pinia'
 import './assets/main.css'
 import { useSessionStore } from "@/stores/modules/sessionStore"
 
+import { library } from "@fortawesome/fontawesome-svg-core"
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
+import { faEyeSlash, faEye, faPaperPlane } from "@fortawesome/free-solid-svg-icons"
+
 const app = createApp(App)
 const pinia = createPinia()
+
+library.add(faEyeSlash, faEye, faPaperPlane)
+
 app.use(pinia)
 // Load JWT from local storage on refresh
 const loadAuthToken = async () => {
@@ -23,6 +30,7 @@ const loadAuthToken = async () => {
 
 loadAuthToken().then(() => {
 	app
+		.component("FontAwesomeIcon", FontAwesomeIcon)
 		.use(router)
 		.mount("#app")
 })
