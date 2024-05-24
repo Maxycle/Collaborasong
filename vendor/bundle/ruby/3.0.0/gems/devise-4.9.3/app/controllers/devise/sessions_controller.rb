@@ -63,6 +63,9 @@ class Devise::SessionsController < DeviseController
       set_flash_message! :notice, :already_signed_out
 
       respond_to_on_destroy
+		else
+			# Log the user details or state here for debugging
+			Rails.logger.info "User is currently signed in: #{current_user.inspect}"
     end
   end
 

@@ -24,10 +24,12 @@ class Users::SessionsController < Devise::SessionsController
     }, status: :unprocessable_entity
   end
 
-  def respond_to_on_destroy
-    return log_out_success if current_user
-
-    log_out_failure
+	def respond_to_on_destroy
+    if all_signed_out?
+      log_out_success
+    else
+      log_out_failure
+    end
   end
 
   def log_out_success
