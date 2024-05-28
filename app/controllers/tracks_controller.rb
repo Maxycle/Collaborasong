@@ -68,7 +68,8 @@ class TracksController < ApplicationController
 			isMyProject: @isMyProject,
 			longitude: @longitutde,
 			latitude: @latitude,
-			children: @children
+			children: @children,
+			chat_id: @track.chat_id
     }
   end
 
@@ -100,6 +101,13 @@ class TracksController < ApplicationController
   end
 
   def update
+		@track = Track.find(params[:id])
+
+    if @track.update(track_params)
+      render json: @track, status: :ok
+    else
+      render json: @track.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -108,6 +116,6 @@ class TracksController < ApplicationController
   private
 
   def track_params
-		params.require(:music_track).permit(:title, :parent_id, :longitude, :latitude)
+		params.require(:music_track).permit(:title, :parent_id, :longitude, :latitude, :chat_id)
 	end
 end

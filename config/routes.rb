@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     registrations: 'users/registrations'
   }
 
-	resources :chatrooms, only: %i[index] do
+	resources :chatrooms, only: %i[index create] do
     resources :messages, only: %i[index create]
   end
 	resources :tracks
