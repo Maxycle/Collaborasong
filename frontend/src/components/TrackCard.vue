@@ -4,7 +4,8 @@
 			class="absolute inset-0 -z-10 h-full w-full object-fill md:object-center rounded-2xl border border-zinc-600" />
 		<div v-if="showCollaborationBadge" class="absolute top-2 right-2 bg-anarcapYellow rounded">
 			<div class="border-b-4 border-anarcapYellow bg-anarcapYellow rounded-xl">
-				<div class="bg-orange-300 rounded p-1 border border-black transition shadow-md shadow-black hover:scale-110 duration-300">
+				<div
+					class="bg-orange-300 rounded p-1 border border-black transition shadow-md shadow-black hover:scale-110 duration-300">
 					<router-link :to="{ name: 'track', params: { zeTrackId: trackId } }" @click="sendTrackDetailsToPinia">
 						has {{ trackData.children.length }} collaborasound<span v-if="trackData.children.length > 1">s</span>
 					</router-link>
@@ -44,7 +45,7 @@
 				</button>
 				<button v-else
 					class="outline outline-blue-400 outline-2 outline-offset-2 bg-lime-100 border border-black transition hover:-translate-x-6 hover:scale-110 duration-300 rounded-xl h-10 w-1/4 flex items-center justify-center"
-					:class="{ 'hidden': doNotshowSeeConversationButton }" @click="goToConversation">See the conversation</button>
+					:class="{ 'hidden': !showSeeConversationButton }" @click="goToConversation">See the conversation</button>
 				<div :class="{ 'invisible': !trackData.instruments || !trackData.instruments.length }">
 					<p class="text-center text-white font-bold">{{ headers.instruments }}</p>
 					<div v-for="instrument in trackData.instruments" :key="instrument.name">
@@ -65,6 +66,7 @@ import { useRoute } from 'vue-router';
 import { useRouter } from "vue-router"
 import { useTrackStore } from '@/stores/modules/tracks';
 import { useSessionStore } from '@/stores/modules/sessionStore';
+import { useChatroomStore } from '@/stores/modules/chatroomStore';
 import ParamButton from './buttons/ParamButton.vue';
 
 const route = useRoute();
@@ -82,6 +84,7 @@ const props = defineProps({
 
 const storeTrack = useTrackStore();
 const storeSession = useSessionStore()
+const storeChatroom = useChatroomStore()
 const trackData = ref({});
 const instrumentHeader = ref('instrument');
 
@@ -89,7 +92,9 @@ const isTrackPage = computed(() => route.path === `/track/${props.parentTrackId}
 const isMyOwnTracksPage = computed(() => route.path === '/my_own_tracks');
 const showCollaborationBadge = computed(() => trackData.value.children && trackData.value.children.length > 0);
 const showMyCollaborationBadge = computed(() => trackData.value.isResult && !isTrackPage.value);
-const doNotshowSeeConversationButton = computed(() => isTrackPage.value && !trackData.value.isMyProject && (storeSession.getUserId !== trackData.value.author?.id));
+const isMyProject = computed(() => storeSession.getUserId === trackData.value.parent_track_user_id);
+const isMyTrack = computed(() => trackData.value.author.id === storeSession.getUserId);
+const showSeeConversationButton = computed(() => isMyProject || isMyTrack)
 const headers = computed(() => {
 	return trackData.value.isResult ? { instruments: `${instrumentHeader.value} added`, origin: 'instrument(s) added by' } : { instruments: `${instrumentHeader.value} needed`, origin: 'from' };
 });
@@ -109,29 +114,16 @@ const sendTrackDetailsToPinia = () => {
 	storeTrack.setTrackBasicData(trackData.value);
 };
 
-const goToConversation = async () => {
-	sendTrackDetailsToPinia();
-	// if (trackData.value.isResult && !trackData.value.conversation_id) {
-		// await createConversation();
-	// } else if (trackData.value.isResult && trackData.value.conversation_id) {
-		router.push({ name: "Chat" });
-		// router.push(`/conversation/${trackData.value.conversation_id}`);
-	// }
-};
+const createChatroom = async () => {
+	await storeChatroom.createChatroom(props.trackId, trackData.value.title);
+}
 
-// const createConversation = async () => {
-// 	try {
-// 		const newConversationResponse = await axios.post('/api/v1/conversations', {
-// 			conversation: {
-// 				music_track_id: props.trackId
-// 			}
-// 		});
-// 		router.push(`/conversation/${newConversationResponse.data.id}`);
-// 		// router.push(`/conversation/${newConversationResponse.data.id}`);
-// 	} catch (error) {
-// 		console.error('Error creating or fetching conversation:', error);
-// 	}
-// };
+const goToConversation = async () => {
+	if (!trackData.value.chat_id) {
+		createChatroom()
+	}
+	router.push({ name: "Chat" });
+};
 
 onMounted(() => {
 	fetchTrackDetails();

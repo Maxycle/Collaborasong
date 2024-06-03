@@ -25,7 +25,7 @@
 import axios from 'axios';
 import NavBarButton from './buttons/NavBarButton.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 
 const store = useSessionStore();
