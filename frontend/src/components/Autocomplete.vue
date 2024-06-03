@@ -12,7 +12,7 @@
 					<div v-else> {{ item.name }}</div>
 				</li>
 			</ul>
-			<button v-else-if="selectedItem !== '' && canAddNewOption && !filteredItems.length" class="p-2 mt-2 w-full bg-green-300 border border-dotted border-black rounded" @click="addNewOption">Add "{{
+			<button v-else-if="showAddButton" class="p-2 mt-2 w-full bg-green-300 border border-dotted border-black rounded" @click="addNewOption">Add "{{
 				selectedItem }}"</button>
 		</div>
 	</div>
@@ -43,7 +43,8 @@ export default {
 			urlToFetch: '',
 			placeholder: 'ta gueule',
 			geocoderResult: [],
-			coordinates: []
+			coordinates: [],
+			selectionMade: false
 		};
 	},
 
@@ -59,6 +60,10 @@ export default {
 		dropdownOptions() {
 			if (this.heading === 'Où ca ??') return this.geocoderResult
 			else return this.filteredItems
+		},
+
+		showAddButton() {
+			return this.selectedItem !== '' && this.canAddNewOption && !this.filteredItems.length && !this.selectionMade
 		}
 	},
 
@@ -73,6 +78,7 @@ export default {
 		},
 
 		filterItems() {
+			this.selectionMade = false
 			const query = this.selectedItem.toLowerCase();
 			this.filteredItems = query === '' ? [] : this.options.filter(item => item.name.toLowerCase().includes(query))
 		},
@@ -86,7 +92,7 @@ export default {
 			} else {
 				this.selectedItem = item.name
 				this.$emit('item-selected', { header: this.heading, name: this.selectedItem, id: item.id })
-				this.selectedItem = ''
+				this.selectionMade = true
 			}
 			this.filteredItems = []
 		},
