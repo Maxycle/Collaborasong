@@ -61,7 +61,7 @@ export const useChatroomStore = defineStore({
 			this.chatroom.messages.push(data)
 		},
 
-		async createChatroom(trackId, songTitle) {
+		async createChatroom(trackId, songTitle, protagonistsIds) {
 			try {
 				const response = await fetch(`${BACKEND_URL}/chatrooms`, {
 					method: 'POST',
@@ -69,7 +69,7 @@ export const useChatroomStore = defineStore({
 						'Content-Type': 'application/json',
 						Authorization: localStorage.getItem("authToken")
 					},
-					body: JSON.stringify({ chatroom: { name: songTitle } }),
+					body: JSON.stringify({ chatroom: { name: songTitle, protagonists_ids: protagonistsIds } }),
 				});
 		
 				if (!response.ok) {
@@ -94,6 +94,7 @@ export const useChatroomStore = defineStore({
 				}
 		
 				const updatedTrack = await updateResponse.json();
+				await this.updateChatroomId(data.id)
 				return updatedTrack;
 			} catch (error) {
 				console.error('Failed to create chatroom or update track:', error);

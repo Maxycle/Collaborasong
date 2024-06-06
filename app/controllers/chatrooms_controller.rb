@@ -20,6 +20,6 @@ class ChatroomsController < ApplicationController
   end
 
   def message_params
-    params.require(:chatroom).permit(:name)
+    params.require(:chatroom).permit(:name, protagonists_ids: [])
   end
 end
