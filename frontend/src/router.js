@@ -7,6 +7,7 @@ import Track from '@/pages/Track.vue'
 import MyTracks from '@/pages/MyTracks.vue'
 import { useSessionStore } from '@/stores/modules/sessionStore'
 import Chat from '@/pages/Chat.vue'
+import Conversation from '@/pages/Conversation.vue'
 
 const routes = [
 	{ path: '/login_signup', name: 'LoginSignup', component: LoginSignup, meta: { requiresAuth: false } },
@@ -15,6 +16,7 @@ const routes = [
 	{ path: '/new_project', name: 'result_track', component: NewProject, meta: { requiresAuth: true } },
 	{ path: '/new_result/:zeTrackId', name: 'new_result_track', component: NewResultTrack, meta: { requiresAuth: true } },
 	{ path: "/chat", name: "Chat", component: Chat, meta: { requiresAuth: true } },
+	{ path: "/conversation/:songTitle", name: "Conversation", component: Conversation, meta: { requiresAuth: true } },
 	{ path: '/my_own_tracks', name: 'my_tracks', component: MyTracks, meta: { requiresAuth: false } }
 ]
 

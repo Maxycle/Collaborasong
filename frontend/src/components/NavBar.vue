@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-between px-4 items-center bg-zinc-200 shadow-lg shadow-stone-400">
+	<div class="flex justify-between px-4 items-center bg-orange-100 shadow-lg shadow-stone-400">
 		<div>Hello {{ loggedInUser.username }} you muzzafucka !!</div>
 		<div class="flex justify-end space-x-2">
 			<NavBarButton :isActive="isRouteActive('/')">
@@ -8,9 +8,9 @@
 			<NavBarButton :isActive="isRouteActive('/my_own_tracks')">
 				<span class="relative"><router-link to="/my_own_tracks">My tracks</router-link></span>
 			</NavBarButton>
-			<!-- <NavBarButton :isActive="isRouteActive('/my_messages')">
-				<span class="relative"><router-link to="/my_messages">My messages</router-link></span>
-			</NavBarButton> -->
+			<NavBarButton :isActive="isRouteActive('/chat')">
+				<span class="relative"><router-link to="/chat">My messages</router-link></span>
+			</NavBarButton>
 			<NavBarButton @click="redirectToEditProfile">
 				<span class="relative">Edit profile</span>
 			</NavBarButton>

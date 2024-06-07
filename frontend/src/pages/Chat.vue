@@ -7,9 +7,7 @@
 					<!-- eslint-disable-next-line max-len -->
 					<button v-for="chatroom in chatroomList" :key="chatroom.id" @click="moveToChatroom(chatroom.id)"
 						class="underline text-white">
-						<div v-if="chatroom.protagonists_ids.includes(sessionStore.getUserId)">
-							<span># </span><span>{{ chatroom.name }}</span>
-						</div>
+						<span># </span><span>{{ chatroom.name }}</span>
 					</button>
 				</nav>
 			</div>
@@ -35,7 +33,7 @@ const moveToChatroom = async id => {
 
 onMounted(async () => {
 	await chatroomStore.chatroomsIndex()
-	await chatroomStore.updateChatroomId(1)
-	chatroomList.value = chatroomStore.getChatrooms
+	chatroomList.value = chatroomStore.getChatrooms.filter(obj => obj.protagonists_ids.includes(sessionStore.getUserId));
+	await chatroomStore.updateChatroomId(chatroomList.value[0].id)
 })
 </script>

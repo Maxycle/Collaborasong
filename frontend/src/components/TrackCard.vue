@@ -94,7 +94,7 @@ const showCollaborationBadge = computed(() => trackData.value.children && trackD
 const showMyCollaborationBadge = computed(() => trackData.value.isResult && !isTrackPage.value);
 const isMyProject = computed(() => storeSession.getUserId === trackData.value.parent_track_user_id);
 const isMyTrack = computed(() => trackData.value.author.id === storeSession.getUserId);
-const showSeeConversationButton = computed(() => isMyProject || isMyTrack)
+const showSeeConversationButton = computed(() => isMyProject.value || isMyTrack.value)
 const headers = computed(() => {
 	return trackData.value.isResult ? { instruments: `${instrumentHeader.value} added`, origin: 'instrument(s) added by' } : { instruments: `${instrumentHeader.value} needed`, origin: 'from' };
 });
@@ -115,14 +115,20 @@ const sendTrackDetailsToPinia = () => {
 };
 
 const createChatroom = async () => {
-	await storeChatroom.createChatroom(props.trackId, trackData.value.title);
+	await storeChatroom.createChatroom(props.trackId, trackData.value.title, [trackData.value.parent_track_user_id, trackData.value.author.id]);
 }
 
 const goToConversation = async () => {
 	if (!trackData.value.chat_id) {
-		createChatroom()
-	}
-	router.push({ name: "Chat" });
+		await createChatroom();
+	} else await storeChatroom.updateChatroomId(trackData.value.chat_id)
+
+	router.push({
+		name: "Conversation",
+		params: {
+			songTitle: trackData.value.title
+		}
+	})
 };
 
 onMounted(() => {
