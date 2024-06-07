@@ -6,7 +6,7 @@
 				<p v-else-if="props.isResult" class="text-2xl font-bold flex justify-center">People's collaborations</p>
 				<div v-if="currentTrackList.length > 0">
 					<div v-for="track in currentTrackList" :key="track.id" class="">
-						<TrackCard :trackId="track.id" :parentTrackId="trackId" class="w-full my-6" />
+						<TrackCard :trackId="track.id" :parentTrackId="trackId" class="w-full my-6"/>
 					</div>
 				</div>
 				<p v-else class="text-center text-gray-500 bg-blue-400">No tracks available yet</p>
@@ -22,7 +22,6 @@ import TrackCard from './TrackCard.vue';
 import { fetchMyTracks } from '../helpers/requests.js';
 import { useTrackStore } from '@/stores/modules/tracks';
 import { useSessionStore } from '@/stores/modules/sessionStore';
-
 
 const props = defineProps({
 	isResult: {
