@@ -1,7 +1,17 @@
 <template>
 	<div class="relative isolate w-full">
 		<img :src="trackImageUrl" alt="Track Image"
-			class="absolute inset-0 -z-10 h-full w-full object-fill md:object-center rounded-2xl border border-zinc-600" />
+			class="absolute inset-0 -z-10 h-full w-full object-fill md:object-center rounded-2xl" />
+		<div v-if="!isMyOwnTracksPage && !isMyTrack" class="absolute top-4 left-4">
+			<div class="flex item-center justify-center">
+				<v-tooltip :text="writeTo">
+					<template v-slot:activator="{ props }">
+						<font-awesome-icon v-bind="props" icon="fa-solid fa-pen-fancy" class="h-8 text-orange-700 cursor-pointer"
+							@click="goToConversationWithAuthorOfTrack" />
+					</template>
+				</v-tooltip>
+			</div>
+		</div>
 		<div v-if="showCollaborationBadge" class="absolute top-2 right-2 bg-anarcapYellow rounded">
 			<div class="border-b-4 border-anarcapYellow bg-anarcapYellow rounded-xl">
 				<div
@@ -87,23 +97,26 @@ const storeSession = useSessionStore()
 const storeChatroom = useChatroomStore()
 const trackData = ref({});
 const instrumentHeader = ref('instrument');
+const authorId = ref()
 
 const isTrackPage = computed(() => route.path === `/track/${props.parentTrackId}`);
 const isMyOwnTracksPage = computed(() => route.path === '/my_own_tracks');
 const showCollaborationBadge = computed(() => trackData.value.children && trackData.value.children.length > 0);
 const showMyCollaborationBadge = computed(() => trackData.value.isResult && !isTrackPage.value);
 const isMyProject = computed(() => storeSession.getUserId === trackData.value.parent_track_user_id);
-const isMyTrack = computed(() => trackData.value.author.id === storeSession.getUserId);
+const isMyTrack = computed(() => storeSession.getUserId === authorId.value);
 const showSeeConversationButton = computed(() => isMyProject.value || isMyTrack.value)
 const headers = computed(() => {
 	return trackData.value.isResult ? { instruments: `${instrumentHeader.value} added`, origin: 'instrument(s) added by' } : { instruments: `${instrumentHeader.value} needed`, origin: 'from' };
-});
+})
+const writeTo = computed(() => { return trackData.value.author ? `Write to ${trackData.value.author.username}` : '' })
 const trackImageUrl = ref('/img/Flag_of_Anarcho-capitalism.png');
 
 const fetchTrackDetails = async () => {
 	try {
 		const response = await axios.get(`/tracks/${props.trackId}`);
 		trackData.value = response.data;
+		authorId.value = trackData.value.author.id
 		instrumentHeader.value = trackData.value.instruments.length > 1 ? 'Instruments' : 'Instrument';
 	} catch (error) {
 		console.error('Error fetching tracks:', error);
@@ -114,13 +127,9 @@ const sendTrackDetailsToPinia = () => {
 	storeTrack.setTrackBasicData(trackData.value);
 };
 
-const createChatroom = async () => {
-	await storeChatroom.createChatroom(props.trackId, trackData.value.title, [trackData.value.parent_track_user_id, trackData.value.author.id]);
-}
-
 const goToConversation = async () => {
 	if (!trackData.value.chat_id) {
-		await createChatroom();
+		await storeChatroom.createChatroom(props.trackId, trackData.value.title, [trackData.value.parent_track_user_id, authorId.value]);
 	} else await storeChatroom.updateChatroomId(trackData.value.chat_id)
 
 	router.push({
@@ -130,6 +139,23 @@ const goToConversation = async () => {
 		}
 	})
 };
+
+const goToConversationWithAuthorOfTrack = async () => {
+	await storeChatroom.chatroomsIndex()
+	const chatrooms = storeChatroom.getChatrooms
+	const chatroomWithAuthor = chatrooms.filter(chatroom => chatroom.protagonists_ids.includes(authorId.value) && !chatroom.isAboutTrack);
+
+	if (!chatroomWithAuthor.length) {
+		await storeChatroom.createChatroom("noTrackId", trackData.value.author.username, [storeSession.getUserId, authorId.value]);
+	} else await storeChatroom.updateChatroomId(chatroomWithAuthor[0].id)
+
+	router.push({
+		name: "Conversation",
+		params: {
+			songTitle: `conversation with ${trackData.value.author.username}`
+		}
+	})
+}
 
 onMounted(() => {
 	fetchTrackDetails();

@@ -4,10 +4,11 @@
 		<img src="/img/Flag_of_Anarcho-capitalism.png" alt="anarcap flag"
 			class="absolute inset-0 -z-10 h-full w-full object-fill md:object-center " />
 		<div class="mx-auto max-w-7xl px-6 lg:px-8">
-			<div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
-				<div class="bg-gradient-to-b from-stone-500 to-stone-300 p-2 rounded-xl">
-					<dl class="grid grid-cols-4 gap-2 p-4 rounded-xl bg-gradient-to-t from-anarcapYellow to-black">
-						<div v-for="label in searchParams" class="text-white font-extrabold p-1 rounded drop-shadow-lg">{{
+			<div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-none border-4 border-stone-500 rounded-xl shadow-md shadow-stone-500">
+				<!-- <div class="bg-gradient-to-b from-stone-500 to-stone-300 p-1 rounded-xl"> -->
+					<!-- <dl class="grid grid-cols-4 gap-2 p-4 rounded-xl bg-gradient-to-t from-anarcapYellow to-black"> -->
+						<dl class="grid grid-cols-4 gap-2 p-4 rounded-xl">
+						<div v-for="label in searchParams" class="font-extrabold p-1 rounded">{{
 							label.name
 						}}</div>
 						<div></div>
@@ -23,7 +24,7 @@
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-4 shadow-lg shadow-zinc-600"><router-link
 								to="/new_project" class="">Start a new collaboration</router-link></button>
 					</dl>
-				</div>
+				<!-- </div> -->
 			</div>
 		</div>
 	</div>

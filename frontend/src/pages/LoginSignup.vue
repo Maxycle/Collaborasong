@@ -1,6 +1,6 @@
 <template>
   <div id="home">
-    <div class="logos">
+    <!-- <div class="logos">
       <a href="https://guides.rubyonrails.org/" target="_blank">
         <img src="/img/rails.png" class="logo" alt="Rails logo">
       </a>
@@ -16,7 +16,7 @@
       <a href="https://pinia.vuejs.org/" target="_blank" class="pinia">
         <img src="/img/pinia.svg" class="logo" alt="Pinia logo">
       </a>
-    </div>
+    </div> -->
 
     <div class="form">
       <UserForm />

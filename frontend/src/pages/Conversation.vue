@@ -11,7 +11,6 @@
 				<Message v-for="(message, index) in chatroomStore.getMessages" :key="message.id" :message="message"
 					:last-message="(index === 0) ? null : chatroomStore.getMessages[index - 1]" class="px-4" />
 			</div>
-
 			<form @submit.prevent="messagesCreate" class="sticky bottom-2 px-4 flex flex-col">
 				<div class="relative w-full">
 					<textarea v-model="newMessage" rows="1" @keyup.enter.exact.prevent="messagesCreate"
@@ -30,10 +29,8 @@ import { ref, nextTick, onBeforeUnmount, onMounted, computed } from "vue"
 import { createConsumer } from "@rails/actioncable"
 
 import { useChatroomStore } from "@/stores/modules/chatroomStore"
-import { useTrackStore } from '@/stores/modules/tracks';
 import Message from "@/components/Message.vue"
 
-// const storeTrack = useTrackStore();
 const chatroomStore = useChatroomStore()
 const actionCableConsumer = createConsumer("ws://localhost:3000/cable")
 let channel
