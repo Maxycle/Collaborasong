@@ -1,11 +1,15 @@
 <template>
 	<div class="flex h-full">
-		<div class="flex border border-green-700 bg-orange-300 w-1/6 justify-center pt-4">
-			<div class="border-4 rounded-xl border-green-700 bg-orange-700 text-white h-fit p-2">
-				{{ title }}
+		<div v-if="chatroomStore.getChatroom.isAboutTrack"
+			class="flex bg-gradient-to-l from-neutral-400 to-neutral-300 w-1/5 justify-center pt-4">
+			<div
+				class="flex flex-col items-center border-4 rounded-xl border-gray-500 bg-orange-700 text-white h-fit p-2 shadow-md shadow-black">
+				<div>Talk to <span class="font-bold italic">{{ chatroomStore.getChatroom.chatterUsername }} </span></div>
+				<p>about...</p>
+				<div class="font-bold">{{ chatroomStore.getChatroom.name }} !!</div>
 			</div>
 		</div>
-		<div class="bg-orange-200 grow flex flex-col py-4">
+		<div class="bg-gradient-to-r from-neutral-400 to-neutral-300 grow flex flex-col py-4">
 			<div ref="messagesElement" class="grow overflow-y-auto">
 				<!-- eslint-disable-next-line max-len -->
 				<Message v-for="(message, index) in chatroomStore.getMessages" :key="message.id" :message="message"
@@ -60,17 +64,6 @@ const messagesCreate = async () => {
 	await chatroomStore.messagesCreate(newMessage.value)
 	newMessage.value = ""
 }
-
-const title = computed(() => {
-    const chatroomId = chatroomStore.getChatroomId;
-    const chatrooms = chatroomStore.getChatrooms;
-    if (chatroomId && chatrooms) {
-        const chatroom = chatrooms.find(obj => obj.id === chatroomId);
-        return chatroom ? chatroom.name : '';
-    } else {
-        return '';
-    }
-});
 
 onMounted(() => {
 	scrollDown()

@@ -1,5 +1,5 @@
 <template>
-	<button class="relative rounded-lg p-4 " :class="{
+	<button class="relative rounded-lg p-4" :class="{
 		'transition hover:text-red-500 hover:font-extrabold hover:scale-110 duration-300': !isActive,
 		'text-white font-bold shadow-stone-600 shadow-lg bg-orange-700 scale-110': isActive
 	}" @mouseover="showImage" @mouseout="hideImage">

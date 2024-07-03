@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-between px-4 items-center bg-orange-100 shadow-lg shadow-stone-400">
+	<div class="flex justify-between px-4 items-center bg-gradient-to-r from-neutral-400 to-neutral-300 shadow-md shadow-gray-700">
 		<div>Hello {{ loggedInUser.username }} you muzzafucka !!</div>
 		<div class="flex justify-end space-x-2">
 			<NavBarButton :isActive="isRouteActive('/')">

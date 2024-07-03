@@ -1,5 +1,5 @@
 <template>
-	<div class="flex flex-col items-center py-4 w-full h-full bg-stone-500 overflow-y-auto">
+	<div class="flex flex-col items-center py-4 w-full h-full bg-gradient-to-r from-neutral-300 to-neutral-400 overflow-y-auto">
 		<button v-if="$route.path === '/'"
 			class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mb-2 shadow-lg shadow-zinc-600"
 			@click="toggleModal">{{ mapButtonText }}</button>
