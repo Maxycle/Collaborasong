@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col h-dvh">
+  <div class="flex flex-col h-screen">
     <div class="sticky top-0 z-10">
       <Hero />
     </div>

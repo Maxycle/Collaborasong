@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-between px-4 items-center bg-zinc-200 shadow-lg shadow-stone-400">
+	<div class="flex justify-between px-4 items-center bg-gradient-to-r from-neutral-400 to-neutral-300 shadow-md shadow-gray-700">
 		<div>Hello {{ loggedInUser.username }} you muzzafucka !!</div>
 		<div class="flex justify-end space-x-2">
 			<NavBarButton :isActive="isRouteActive('/')">
@@ -8,9 +8,9 @@
 			<NavBarButton :isActive="isRouteActive('/my_own_tracks')">
 				<span class="relative"><router-link to="/my_own_tracks">My tracks</router-link></span>
 			</NavBarButton>
-			<!-- <NavBarButton :isActive="isRouteActive('/my_messages')">
-				<span class="relative"><router-link to="/my_messages">My messages</router-link></span>
-			</NavBarButton> -->
+			<NavBarButton :isActive="isRouteActive('/chat')">
+				<span class="relative"><router-link to="/chat">My messages</router-link></span>
+			</NavBarButton>
 			<NavBarButton @click="redirectToEditProfile">
 				<span class="relative">Edit profile</span>
 			</NavBarButton>
@@ -25,7 +25,7 @@
 import axios from 'axios';
 import NavBarButton from './buttons/NavBarButton.vue';
 import { useRoute, useRouter } from 'vue-router';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed } from 'vue';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 
 const store = useSessionStore();

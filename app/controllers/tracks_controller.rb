@@ -44,13 +44,9 @@ class TracksController < ApplicationController
 			first_name: author.first_name,
 			last_name: author.last_name
 		}
-		if current_user
-			@isMyProject = @parent_track_user_id === current_user.id
-		else
-			@isMyProject = false
-		end
-    @result = !@track.parent_id.nil?
 		@parent_track_user_id = @track.parent ? @track.parent.user.id : nil
+
+    @result = !@track.parent_id.nil?
 		# @longitutde = @track.longitude
 		# @latitude = @track.latitude
 		@children = @track.child_tracks
@@ -65,11 +61,11 @@ class TracksController < ApplicationController
       instruments: @instruments,
       isResult: @result,
 			parent_track_user_id: @parent_track_user_id,
-			isMyProject: @isMyProject,
 			longitude: @longitutde,
 			latitude: @latitude,
-			children: @children
-    }
+			children: @children,
+			chat_id: @track.chat_id
+		}
   end
 
   def new
@@ -100,6 +96,13 @@ class TracksController < ApplicationController
   end
 
   def update
+		@track = Track.find(params[:id])
+
+    if @track.update(track_params)
+      render json: @track, status: :ok
+    else
+      render json: @track.errors, status: :unprocessable_entity
+    end
   end
 
   def destroy
@@ -108,6 +111,6 @@ class TracksController < ApplicationController
   private
 
   def track_params
-		params.require(:music_track).permit(:title, :parent_id, :longitude, :latitude)
+		params.require(:music_track).permit(:title, :parent_id, :longitude, :latitude, :chat_id)
 	end
 end

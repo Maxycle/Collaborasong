@@ -4,6 +4,11 @@ module.exports = {
 		'./src/pages/**/*.{vue,js,ts,jsx,tsx}',
 		'./src/App.vue'
 	],
+	variants: {
+		extend: {
+			textColor: ['hover'],
+		}
+	},
 	theme: {
 		extend: {
 			fontFamily: {
@@ -17,4 +22,3 @@ module.exports = {
 	},
 	plugins: []
 }
-
