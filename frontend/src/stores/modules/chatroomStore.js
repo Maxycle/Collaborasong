@@ -1,7 +1,7 @@
-import { defineStore } from "pinia"
-import { useSessionStore } from "./sessionStore"
+import { defineStore } from "pinia";
+import { useSessionStore } from "./sessionStore";
 
-const BACKEND_URL = "http://localhost:3000"
+const BACKEND_URL = "http://localhost:3000";
 
 export const useChatroomStore = defineStore({
 	id: 'chatroomStore',
@@ -9,21 +9,30 @@ export const useChatroomStore = defineStore({
 		chatrooms: [],
 		chatroom: {
 			id: null,
-			messages: []
-		}
+			messages: [],
+			chatterID: undefined,
+			chatterUsername: '',
+			name: '',
+			isAboutTrack: undefined
+		},
+		uzers: []
 	}),
 
 	getters: {
 		getChatrooms() {
-			return this.chatrooms
+			return this.chatrooms;
+		},
+
+		getChatroom() {
+			return this.chatroom;
 		},
 
 		getChatroomId() {
-			return this.chatroom.id
+			return this.chatroom.id;
 		},
 
 		getMessages() {
-			return this.chatroom.messages
+			return this.chatroom.messages;
 		}
 	},
 
@@ -31,29 +40,65 @@ export const useChatroomStore = defineStore({
 		async chatroomsIndex() {
 			const res = await fetch(`${BACKEND_URL}/chatrooms`, {
 				headers: { Authorization: localStorage.getItem("authToken") }
-			})
-			const data = await res.json()
-			
+			});
+
+			if (!res.ok) {
+				console.error('Failed to fetch chatrooms');
+				return;
+			}
+
+			const response = await res.json();
+			const data = response.chatrooms;
+			this.uzers = response.uzers;
+
 			if (data && data.length > 0) {
-				this.chatrooms = data
-				this.chatroom.id = this.chatrooms[0].id
+				this.chatrooms = data;
+				this.updateChatroomId(this.chatrooms[0].id);
 			} else {
-				const sessionStore = useSessionStore()
-				await this.createChatroom('noTrackId', 'Welcome to Collaborasound', [sessionStore.getUserId, sessionStore.getUserId])
+				const sessionStore = useSessionStore();
+				await this.createChatroom('noTrackId', 'Welcome to Collaborasound', [sessionStore.getUserId(), sessionStore.getUserId()]);
 			}
 		},
 
+		setChatroomDetails(id) {
+			const sessionStore = useSessionStore();
+			const userId = sessionStore.getUserId;
+
+			const chatroom = this.chatrooms.find(chatroom => chatroom.id === id);
+			if (!chatroom) {
+				console.error('Chatroom not found');
+				return;
+			}
+
+			const chatterID = chatroom.protagonists_ids.find(id => id !== userId);
+			this.chatroom.chatterID = chatterID;
+
+			const chatterUser = this.uzers.find(user => user.id === chatterID);
+			if (chatterUser) {
+				this.chatroom.chatterUsername = chatterUser.username;
+			}
+			this.chatroom.isAboutTrack = chatroom.isAboutTrack
+			this.chatroom.name = chatroom.name
+		},
+
 		async updateChatroomId(id) {
-			this.chatroom.id = id
-			await this.messagesIndex()
+			this.chatroom.id = id;
+			this.setChatroomDetails(id);
+			await this.messagesIndex();
 		},
 
 		async messagesIndex() {
 			const res = await fetch(`${BACKEND_URL}/chatrooms/${this.getChatroomId}/messages`, {
 				headers: { Authorization: localStorage.getItem("authToken") }
-			})
-			const data = await res.json()
-			this.chatroom.messages = data
+			});
+
+			if (!res.ok) {
+				console.error('Failed to fetch messages');
+				return;
+			}
+
+			const data = await res.json();
+			this.chatroom.messages = data;
 		},
 
 		async messagesCreate(messageBody) {
@@ -61,16 +106,16 @@ export const useChatroomStore = defineStore({
 				method: "POST",
 				headers: { Authorization: localStorage.getItem("authToken"), "Content-Type": "application/json" },
 				body: JSON.stringify({ message: { content: messageBody } })
-			})
-			await this.messagesIndex()
+			});
+			await this.messagesIndex();
 		},
 
 		addMessage(data) {
-			this.chatroom.messages.push(data)
+			this.chatroom.messages.push(data);
 		},
 
 		async createChatroom(trackId, songTitle, protagonistsIds) {
-			const isTrackChat = trackId === 'noTrackId' ? false : true 
+			const isTrackChat = trackId !== 'noTrackId';
 			try {
 				// Create the chatroom
 				const response = await fetch(`${BACKEND_URL}/chatrooms`, {
@@ -117,4 +162,4 @@ export const useChatroomStore = defineStore({
 			}
 		}
 	}
-})
+});

@@ -1,8 +1,13 @@
 class ChatroomsController < ApplicationController
 	def index
-    chatrooms = Chatroom.where('protagonists_ids @> ARRAY[?]::integer[]', current_user.id)
-    render json: chatrooms, status: :ok
-  end
+		chatrooms = Chatroom.order(created_at: :desc).where('protagonists_ids @> ARRAY[?]::integer[]', current_user.id)
+		uzers = User.all
+		render json: {
+			chatrooms: chatrooms,
+			uzers: uzers
+		}, status: :ok
+	end
+	
 
   def create
     chatroom = Chatroom.new(chatroom_params)
