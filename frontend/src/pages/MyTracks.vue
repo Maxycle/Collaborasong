@@ -1,6 +1,6 @@
 <template>
 	<Container class="overflow-y-auto">
-		<TrackList isMyTracks/>
+		<TrackList isMyTracks class="w-full"/>
 	</Container>
 </template>
 

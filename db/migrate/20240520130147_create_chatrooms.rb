@@ -5,6 +5,6 @@ class CreateChatrooms < ActiveRecord::Migration[7.0]
 
       t.timestamps
     end
-    add_index :chatrooms, :name, unique: true
+    add_index :chatrooms, :name
   end
 end

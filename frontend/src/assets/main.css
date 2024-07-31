@@ -2,3 +2,10 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+.button-trackcard {
+	@apply outline outline-blue-400 outline-2 outline-offset-2 bg-lime-100 border border-black transition hover:scale-125 duration-300 rounded-full h-10 w-1/4 flex items-center justify-center;
+}
+
+.button-audio {
+	@apply outline outline-blue-400 outline-2 outline-offset-2 transition hover:scale-125 duration-300 rounded-full flex items-center justify-center;
+}

@@ -33,6 +33,10 @@ export const useChatroomStore = defineStore({
 
 		getMessages() {
 			return this.chatroom.messages;
+		},
+
+		getUzers() {
+			return this.uzers;
 		}
 	},
 
@@ -56,7 +60,8 @@ export const useChatroomStore = defineStore({
 				this.updateChatroomId(this.chatrooms[0].id);
 			} else {
 				const sessionStore = useSessionStore();
-				await this.createChatroom('noTrackId', 'Welcome to Collaborasound', [sessionStore.getUserId(), sessionStore.getUserId()]);
+				console.log('sessionStore.getUserId', sessionStore.getUserId)
+				await this.createChatroom('noTrackId', 'Welcome to Collaborasound', [sessionStore.getUserId, sessionStore.getUserId]);
 			}
 		},
 

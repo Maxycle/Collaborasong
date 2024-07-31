@@ -10,10 +10,10 @@ class MessagesController < ApplicationController
     message.chatroom = @chatroom
     message.user = current_user
     message.username = current_user.username
+		message.read = false
 
     if message.save
       ChatroomChannel.broadcast_to(@chatroom, message)
-
       head :ok
     else
       render json: message.errors.full_messages, status: :unprocessable_entity

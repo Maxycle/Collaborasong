@@ -18,14 +18,17 @@
 						</div>
 						<div class="flex flex-wrap mt-2">
 							<div v-for="item in instruments" :key="item">
-								<ParamButton :item="item" removable
-									@removed="removeParameters('Instrument recherchié', item)" />
+								<ParamButton :item="item" removable @removed="removeParameters('Instrument recherchié', item)" />
 							</div>
 						</div>
 						<div class="flex flex-wrap mt-2"></div>
-						<button
+						<div
+							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-2 shadow-md shadow-zinc-600">
+							<input type="file" @change="handleFileUpload" required />
+						</div>
+						<!-- <button
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-2 shadow-md shadow-zinc-600"
-							@click="createTrack">Upload your track</button>
+							@click="createTrack">Upload your track</button> -->
 						<button
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 shadow-md shadow-zinc-600"
 							@click="createTrack">Create project</button>
@@ -38,6 +41,7 @@
 
 <script setup>
 import axios from 'axios'
+// import axiosCSRF from '@/helpers/axiosCSRF'
 import Container from '@/components/Container.vue'
 import Autocomplete from '@/components/Autocomplete.vue'
 import ParamButton from '@/components/buttons/ParamButton.vue'
@@ -51,6 +55,7 @@ const instruments = ref([])
 const genres = ref([])
 const router = useRouter()
 const store = useSessionStore();
+const audioFile = ref(null);
 
 const newProjectParams = reactive([
 	{ name: 'Genre de zikmu', value: '12' },
@@ -58,21 +63,31 @@ const newProjectParams = reactive([
 	{ name: 'Où ca ??', value: '300+' }
 ])
 
+const handleFileUpload = (event) => {
+	audioFile.value = event.target.files[0];
+}
+
 const createTrack = async () => {
+	const formData = new FormData();
+	formData.append('music_track[title]', trackTitle.value);
+
+	selectNamesOrIds(instruments.value, 'id').forEach(id => {
+		formData.append('music_track[instrument_ids][]', id);
+	});
+
+	// Append each genre ID individually
+	selectNamesOrIds(genres.value, 'id').forEach(id => {
+		formData.append('music_track[genre_ids][]', id);
+	});
+
+	formData.append('music_track[audio_file]', audioFile.value);
 	try {
-		const response = await axios.post('/tracks', {
-			music_track: {
-				title: trackTitle.value,
-				instrument_ids: selectNamesOrIds(instruments, 'id'),
-				music_genre_ids: selectNamesOrIds(genres, 'id')
+		const response = await axios.post('/tracks', formData, {
+			headers: {
+				Authorization: `${store.getAuthToken}`,
+				'Content-Type': 'multipart/form-data'
 			}
-		},
-			{
-				headers: {
-					Authorization: `${store.getAuthToken}`
-				}
-			}
-		)
+		});
 
 		await Promise.all([
 			fetchTracks('/tracks'),
@@ -116,13 +131,14 @@ const addParameters = (obj) => {
 	if (obj.name !== '') {
 		switch (obj.header) {
 			case 'Instrument recherchié':
-				if (!selectNamesOrIds(instruments, name).includes(obj.name))
+				if (!selectNamesOrIds(instruments.value, 'name').includes(obj.name))
 					instruments.value.push(obj)
-				console.log('instru ids', selectNamesOrIds(instruments, 'id'))
+				console.log('instru ids', selectNamesOrIds(instruments.value, 'id'))
 				break;
 			case 'Genre de zikmu':
-				if (!selectNamesOrIds(genres, name).includes(obj.name))
+				if (!selectNamesOrIds(genres.value, 'name').includes(obj.name))
 					genres.value.push(obj)
+				console.log('genres ids', selectNamesOrIds(genres.value, 'id'))
 				break;
 			default:
 				console.log('default !!!!!!');
@@ -138,15 +154,15 @@ const removeParameters = (additionalParameter, itemToRemove) => {
 	switch (additionalParameter) {
 		case 'Instrument recherchié':
 			const instrumentIndex = instruments.value.findIndex(obj => obj.name === itemToRemove.name);
-      if (instrumentIndex !== -1) {
-        instruments.value.splice(instrumentIndex, 1);
-      }
+			if (instrumentIndex !== -1) {
+				instruments.value.splice(instrumentIndex, 1);
+			}
 			break;
 		case 'Genre de zikmu':
 			const genreIndex = genres.value.findIndex(obj => obj.name === itemToRemove.name);
-      if (genreIndex !== -1) {
-        genres.value.splice(genreIndex, 1);
-      }
+			if (genreIndex !== -1) {
+				genres.value.splice(genreIndex, 1);
+			}
 			break;
 		default:
 			console.log('default !!!!!!');
@@ -154,7 +170,7 @@ const removeParameters = (additionalParameter, itemToRemove) => {
 }
 
 const selectNamesOrIds = (array, names_or_ids) => {
-	const arrayOfNames = names_or_ids === 'name' ? array.value.map(item => item.name) : array.value.map(item => item.id)
+	const arrayOfNames = names_or_ids === 'name' ? array.map(item => item.name) : array.map(item => item.id)
 	return arrayOfNames
 }
 </script>

@@ -8,4 +8,10 @@ class Track < ApplicationRecord
 
 	has_many :track_genres
   has_many :genres, through: :track_genres
+
+	has_one_attached :audio_file  # This line adds the attachment
+
+	def audio_file_attached?
+    audio_file.attached?
+  end
 end

@@ -20,8 +20,8 @@ module Collaborasong
     config.session_store :cookie_store, key: 'collabo_session'
 
     # Ensure the middleware for session, flash, and cookies are loaded
-    config.middleware.use ActionDispatch::Cookies
-    config.middleware.use ActionDispatch::Session::CookieStore
+    # config.middleware.use ActionDispatch::Cookies
+    # config.middleware.use ActionDispatch::Session::CookieStore
 		config.secret_key_base = Rails.application.credentials[:secret_key_base]
 		# config.secret_key_base = 'e8a3a9202b6db2e7fd077652b945397fa5bcd38055f941d3ed344d19bc3df190618800ea9aa3d7a6deaea4c6aef69be67345ed6fcdbc8ddf19df9e4f17a1cb27'
     # Only loads a smaller set of middleware suitable for API only apps.

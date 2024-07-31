@@ -1,7 +1,8 @@
 <template>
 	<div class="flex h-full">
 		<!-- eslint-disable-next-line max-len -->
-		<div class="w-1/6 bg-gradient-to-r from-neutral-400 to-neutral-300 flex flex-col hover:bg-color-gradient transition duration-300">
+		<div
+			class="w-1/6 bg-gradient-to-r from-neutral-400 to-neutral-300 flex flex-col hover:bg-color-gradient transition duration-300">
 			<div class="grow overflow-hidden p-2 hover:text-orange-700 transition duration-300">
 				<nav class="flex flex-col items-start">
 					<!-- eslint-disable-next-line max-len -->
@@ -14,6 +15,9 @@
 				</nav>
 			</div>
 		</div>
+		<!-- <div v-for="notification in notifications" :key="notification.id" class="notification">
+			New message from {{ notification.message.username }}: {{ notification.message.content }}
+		</div> -->
 		<Conversation class="w-full" :key="refreshKey" />
 	</div>
 </template>
@@ -21,10 +25,13 @@
 <script setup>
 
 import { useChatroomStore } from "@/stores/modules/chatroomStore"
+import { useSessionStore } from "@/stores/modules/sessionStore"
+
 import { ref, onMounted } from "vue"
 import Conversation from "@/pages/Conversation.vue"
 
 const chatroomStore = useChatroomStore()
+const sessionStore = useSessionStore()
 const chatroomList = ref([])
 const refreshKey = ref(0)
 const chatroomSelected = ref(undefined)
@@ -44,7 +51,14 @@ onMounted(async () => {
 
 const conversationTitle = (chatroom) => {
 	if (chatroom.isAboutTrack) { return chatroom.name }
-	else if (chatroom.name !== 'Welcome to Collaborasound') { return `Chat with ${chatroom.name}` }
+	else if (chatroom.name !== 'Welcome to Collaborasound') { return `Chat with ${chatter(chatroom.protagonists_ids).username}` }
 	else return chatroom.name
 }
+
+const chatter = (protagonistsIds) => {
+	const chatterId = protagonistsIds.find(id => id !== sessionStore.getUserId)
+	return chatroomStore.getUzers.find(user => user.id === chatterId);
+}
+
+
 </script>

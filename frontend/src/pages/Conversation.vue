@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onBeforeUnmount, onMounted, computed } from "vue"
+import { ref, nextTick, onBeforeUnmount, onMounted } from "vue"
 import { createConsumer } from "@rails/actioncable"
 
 import { useChatroomStore } from "@/stores/modules/chatroomStore"

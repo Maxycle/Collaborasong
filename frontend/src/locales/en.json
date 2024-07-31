@@ -1,0 +1,40 @@
+{
+	"common": {
+		"next": "Next",
+		"cancel": "Cancel"
+	},
+	"home": {
+		"logOut": {
+			"logIn": "Log in",
+			"register": "Register"
+		},
+		"logIn": {
+			"welcome": "Welcomeuh!"
+		}
+	},
+	"trackCard": {
+		"toolTip": "Wriote to ",
+		"badge": {
+			"collabo":"Has {n} collaboration | Has {n} collaborations",
+			"myCollabo": "My collaborasound"
+		},
+		"titleOrigin": "from",
+		"headers": {
+			"instrumentsAdded": {
+				"list": "Instrument added | Instruments added",
+				"title": "instrument added by | instruments added by"
+			},
+			"instrumentsNeeded": {
+				"list": "Instrument needed | Instruments needed",
+				"title": "from"
+			},
+			"style": "Music style | Music styles"
+		},
+		"button": {
+			"collaborate": "Collaborate",
+			"collaborateToMyOwnTrack": "Collaborate to my own project",
+			"conversation": "Go to conversation",
+			"noTrack": "No track, empty record"
+		} 
+	}
+}

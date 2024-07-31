@@ -1,6 +1,6 @@
 class Users::SessionsController < Devise::SessionsController
   respond_to :json
-	
+
   private
 
   def set_flash_message(_key, _kind, _options); end

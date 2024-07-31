@@ -2,12 +2,17 @@ import { createApp } from 'vue'
 import router from './router.js'
 import App from './App.vue'
 import { createPinia } from 'pinia'
+import { createConsumer } from "@rails/actioncable"
 import './assets/main.css'
 import { useSessionStore } from "@/stores/modules/sessionStore"
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
+
+import { createI18n } from 'vue-i18n'
+import fr from "./locales/fr.json" 
+import en from "./locales/en.json" 
 
 import { library } from "@fortawesome/fontawesome-svg-core"
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome"
@@ -33,8 +38,15 @@ const loadAuthToken = async () => {
 }
 
 const vuetify = createVuetify({
-  components,
-  directives
+	components,
+	directives
+})
+
+const i18n = createI18n({
+	locale: navigator.language,
+	fallbackLocale: "en",
+	messages: { fr, en },
+	legacy: false
 })
 
 loadAuthToken().then(() => {
@@ -42,5 +54,6 @@ loadAuthToken().then(() => {
 		.component("FontAwesomeIcon", FontAwesomeIcon)
 		.use(router)
 		.use(vuetify)
+		.use(i18n)
 		.mount("#app")
 })

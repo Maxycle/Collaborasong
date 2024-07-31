@@ -1,0 +1,18 @@
+{
+	"common": {
+		"next": "Suivant",
+		"cancel": "Annuler"
+	},
+	"home": {
+		"logOut": {
+			"logIn": "Se connecter",
+			"register": "S'enregistrer"
+		},
+		"logIn": {
+			"welcome": "Bienvenu !!"
+		}
+	},
+	"trackCard": {
+		"toolTip": "Ecris à "
+	}
+}
