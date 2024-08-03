@@ -3,10 +3,7 @@
 		<div class="sticky top-0 z-10">
 			<Hero />
 			<ul class="">
-      <li v-for="(notification, index) in notifications" :key="index">
-        {{ notification.message }}
-      </li>
-    </ul>
+			</ul>
 		</div>
 		<div class="grow overflow-hidden">
 			<router-view></router-view>
@@ -15,31 +12,31 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from "vue"
-import Hero from './components/Hero.vue';
+import { ref, onMounted, watch, onBeforeUnmount, watchEffect } from "vue"
+import Hero from './components/Hero.vue'
 import { createConsumer } from "@rails/actioncable"
 import { useSessionStore } from "@/stores/modules/sessionStore"
+import { useChatroomStore } from "@/stores/modules/chatroomStore"
 
 const sessionStore = useSessionStore()
+const chatroomStore = useChatroomStore()
 const actionCableConsumer = createConsumer("ws://localhost:3000/cable")
 const notifications = ref([])
-let channel
 
-onMounted(async () => {
-	if (sessionStore.getUserId) {
-		subscribeToNotifications()
-	}
-})
+let channel
 
 const subscribeToNotifications = () => {
 	const userId = sessionStore.getUserId
 	channel = actionCableConsumer.subscriptions.create(
 		{ channel: "NotificationsChannel", user_id: userId },
 		{
-			received(data) {
-				console.log('Received data:', data)
-				notifications.value.push(data)
-				// notifications.value = [...notifications.value, data]
+			async received(data) {
+				const hasUnread = await chatroomStore.hasUnreadMessage(data.chatroom_id)
+				console.log('unRead ??', hasUnread)
+				if (hasUnread) {
+					// unreadChatrooms.value.push(data.chatroom_id)
+					chatroomStore.addUnreadChatroom(data.chatroom_id)
+				}
 			},
 			connected() {
 				console.log('Connected to NotificationsChannel')
@@ -49,8 +46,36 @@ const subscribeToNotifications = () => {
 			}
 		}
 	)
-	console.log('WebSocket connection from main:', actionCableConsumer)
 }
 
+onMounted(async () => {
+	await chatroomStore.chatroomsIndex();
+
+	watch(
+		() => sessionStore.getUserId,
+		async (newUserId) => {
+			if (newUserId) {
+				subscribeToNotifications()
+				await chatroomStore.chatroomsIndex()
+				await chatroomStore.setUnreadChatrooms()
+			}
+		}
+	)
+
+	watch(
+		() => chatroomStore.getChatrooms,
+		async (newChatrrooms) => {
+			await chatroomStore.setUnreadChatrooms()
+		},
+		{ immediate: true }
+	)
+})
+
+
+
 onBeforeUnmount(() => channel.unsubscribe())
+
+watchEffect(() => {
+	console.log('chatroomStore.getChatrooms value:', chatroomStore.getChatrooms)
+})
 </script>

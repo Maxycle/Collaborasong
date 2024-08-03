@@ -10,7 +10,6 @@ export async function fetchTracks(url) {
 	const storeSession = useSessionStore();
   try {
     const fetchedTracks = await storeTrack.searchTracks(url, storeSession.getAuthToken);
-    console.log('Fetched tracks:', fetchedTracks);
     return fetchedTracks;
   } catch (error) {
     console.error('Error fetching tracks:', error);
@@ -24,7 +23,6 @@ export async function fetchMyTracks() {
 	const storeSession = useSessionStore();
   try {
     const fetchedMyTracks = await storeTrack.searchTracks('/my_tracks', storeSession.getAuthToken);
-    console.log('Fetched my tracks in requests:', fetchedMyTracks);
     return fetchedMyTracks;
   } catch (error) {
     console.error('Error fetching my tracks:', error);

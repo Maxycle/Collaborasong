@@ -30,7 +30,6 @@ export const useTrackStore = defineStore({
 					this.trackListIdsInStore = data; // Directly mutating state
 				}
 				this.loading = false
-				console.log('Fetched tracks pinia:', data);
 				return data;
 			} catch (error) {
 				console.error('Error fetching tracks in store:', error);

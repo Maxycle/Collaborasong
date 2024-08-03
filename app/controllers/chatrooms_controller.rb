@@ -1,4 +1,6 @@
 class ChatroomsController < ApplicationController
+	before_action :set_chatroom, only: [:mark_as_read]
+
 	def index
 		chatrooms = Chatroom.order(created_at: :desc).where('protagonists_ids @> ARRAY[?]::integer[]', current_user.id)
 		uzers = User.all
@@ -19,10 +21,16 @@ class ChatroomsController < ApplicationController
     end
   end
 
+
+	def mark_as_read
+    @chatroom.messages.where.not(user: current_user).where(read: false).update_all(read: true)
+    head :ok
+  end
+
   private
 
   def set_chatroom
-    @chatroom = Chatroom.find_by(id: params[:chatroom_id])
+    @chatroom = Chatroom.find_by(id: params[:id])
   end
 
   def chatroom_params

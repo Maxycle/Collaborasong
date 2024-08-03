@@ -12,7 +12,7 @@
 		<div class="bg-gradient-to-r from-neutral-400 to-neutral-300 grow flex flex-col py-4">
 			<div ref="messagesElement" class="grow overflow-y-auto">
 				<!-- eslint-disable-next-line max-len -->
-				<Message v-for="(message, index) in chatroomStore.getMessages" :key="message.id" :message="message"
+				<Message v-for="(message, index) in messages" :key="message.id" :message="message"
 					:last-message="(index === 0) ? null : chatroomStore.getMessages[index - 1]" class="px-4" />
 			</div>
 			<form @submit.prevent="messagesCreate" class="sticky bottom-2 px-4 flex flex-col">
@@ -29,18 +29,21 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onBeforeUnmount, onMounted } from "vue"
+import { ref, nextTick, onBeforeUnmount, onMounted, watch } from "vue"
 import { createConsumer } from "@rails/actioncable"
-
+import axios from 'axios'
 import { useChatroomStore } from "@/stores/modules/chatroomStore"
+import { useSessionStore } from '@/stores/modules/sessionStore';
 import Message from "@/components/Message.vue"
 
+const storeSession = useSessionStore();
 const chatroomStore = useChatroomStore()
 const actionCableConsumer = createConsumer("ws://localhost:3000/cable")
 let channel
 
 const messagesElement = ref(null)
 const newMessage = ref("")
+const messages = ref([])
 
 const scrollDown = () => {
 	nextTick(() => {
@@ -48,16 +51,42 @@ const scrollDown = () => {
 	})
 }
 
-const addMessage = data => {
-	chatroomStore.addMessage(data)
-	scrollDown()
-}
-
 const subscribeToChannel = () => {
 	channel = actionCableConsumer.subscriptions.create(
 		{ channel: "ChatroomChannel", id: chatroomStore.getChatroomId },
-		{ received: data => addMessage(data) }
+		{
+			received: async (data) => {
+				try {
+					messages.value.push(data)
+					await markAsRead(chatroomStore.getChatroomId)
+					console.log('last message after MAR', chatroomStore.getMessages[chatroomStore.getMessages.length - 1])
+				} catch (error) {
+					console.error('Error in received callback:', error)
+				} finally {
+					scrollDown()
+				}
+			}
+		}
 	)
+}
+
+const markAsRead = async (chatroomId) => {
+	try {
+		const response = await axios.post(`/chatrooms/${chatroomId}/mark_as_read`, null, {
+			headers: {
+				Authorization: `${storeSession.getAuthToken}`
+			}
+		})
+		if (response.status === 200) {
+			console.log('Marked as read successfully')
+			// Refresh messages from the store to get the latest read status
+			await chatroomStore.messagesIndex()
+		} else {
+			console.error('Failed to mark as read:', response)
+		}
+	} catch (error) {
+		console.error('Error marking as read:', error)
+	}
 }
 
 const messagesCreate = async () => {
@@ -66,9 +95,25 @@ const messagesCreate = async () => {
 }
 
 onMounted(() => {
-	scrollDown()
+	messages.value = chatroomStore.getMessages
 	subscribeToChannel()
+
+	watch(
+		() => chatroomStore.getChatroomId,
+		async (newChatroomId) => {
+			if (newChatroomId) {
+				chatroomStore.removeUnreadChatroom(chatroomStore.getChatroomId)
+				await markAsRead(newChatroomId)
+			}
+		},
+		{ immediate: true }
+	)
+	scrollDown()
 })
 
-onBeforeUnmount(() => channel.unsubscribe())
+onBeforeUnmount(() => {
+	if (channel) {
+		channel.unsubscribe()
+	}
+})
 </script>

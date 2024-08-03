@@ -11,6 +11,9 @@ Rails.application.routes.draw do
 
 	resources :chatrooms, only: %i[index create] do
     resources :messages, only: %i[index create]
+		member do
+			post :mark_as_read
+		end
   end
 	resources :tracks
   resources :instruments, only: [:index, :new, :create]
@@ -19,7 +22,6 @@ Rails.application.routes.draw do
   get '/index_results/:id', to: 'tracks#index_results', as: 'index_results'
 	get '/my_tracks', to: 'tracks#myTracks', as: 'myTracks'
 	get "/member-data", to: "members#show"
-	post 'new_csrf_token', to: 'sessions#new_csrf_token'
 	get "*path", to: "static#index", constraints: proc { |request| !request.xhr? && request.format.html? }
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

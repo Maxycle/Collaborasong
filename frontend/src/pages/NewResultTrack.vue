@@ -25,7 +25,7 @@
 </template>
 
 <script setup>
-import { nextTick, ref } from 'vue'
+import { ref } from 'vue'
 import axios from 'axios'
 import Container from '@/components/Container.vue'
 import Autocomplete from '@/components/Autocomplete.vue'

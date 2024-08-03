@@ -15,9 +15,6 @@
 				</nav>
 			</div>
 		</div>
-		<!-- <div v-for="notification in notifications" :key="notification.id" class="notification">
-			New message from {{ notification.message.username }}: {{ notification.message.content }}
-		</div> -->
 		<Conversation class="w-full" :key="refreshKey" />
 	</div>
 </template>
@@ -46,7 +43,8 @@ onMounted(async () => {
 	await chatroomStore.chatroomsIndex()
 	chatroomList.value = chatroomStore.getChatrooms
 	chatroomSelected.value = chatroomList.value[0].id
-	await chatroomStore.updateChatroomId(chatroomList.value[0].id)
+	await chatroomStore.updateChatroomId(chatroomSelected.value)
+	refreshKey.value++
 })
 
 const conversationTitle = (chatroom) => {

@@ -15,7 +15,8 @@ export const useChatroomStore = defineStore({
 			name: '',
 			isAboutTrack: undefined
 		},
-		uzers: []
+		unreadChatrooms: [],
+		uzers: [],
 	}),
 
 	getters: {
@@ -37,6 +38,10 @@ export const useChatroomStore = defineStore({
 
 		getUzers() {
 			return this.uzers;
+		},
+
+		getUnreadChatrooms() {
+			return this.unreadChatrooms
 		}
 	},
 
@@ -48,7 +53,7 @@ export const useChatroomStore = defineStore({
 
 			if (!res.ok) {
 				console.error('Failed to fetch chatrooms');
-				return;
+				return
 			}
 
 			const response = await res.json();
@@ -60,7 +65,6 @@ export const useChatroomStore = defineStore({
 				this.updateChatroomId(this.chatrooms[0].id);
 			} else {
 				const sessionStore = useSessionStore();
-				console.log('sessionStore.getUserId', sessionStore.getUserId)
 				await this.createChatroom('noTrackId', 'Welcome to Collaborasound', [sessionStore.getUserId, sessionStore.getUserId]);
 			}
 		},
@@ -92,17 +96,21 @@ export const useChatroomStore = defineStore({
 			await this.messagesIndex();
 		},
 
-		async messagesIndex() {
-			const res = await fetch(`${BACKEND_URL}/chatrooms/${this.getChatroomId}/messages`, {
+		async fetchMessages(chatroomId) {
+			const result = await fetch(`${BACKEND_URL}/chatrooms/${chatroomId}/messages`, {
 				headers: { Authorization: localStorage.getItem("authToken") }
 			});
 
-			if (!res.ok) {
+			if (!result.ok) {
 				console.error('Failed to fetch messages');
-				return;
+				return [];
 			}
+			const messages = await result.json();
+			return messages;
+		},
 
-			const data = await res.json();
+		async messagesIndex() {
+			const data = await this.fetchMessages(this.getChatroomId)
 			this.chatroom.messages = data;
 		},
 
@@ -113,10 +121,6 @@ export const useChatroomStore = defineStore({
 				body: JSON.stringify({ message: { content: messageBody } })
 			});
 			await this.messagesIndex();
-		},
-
-		addMessage(data) {
-			this.chatroom.messages.push(data);
 		},
 
 		async createChatroom(trackId, songTitle, protagonistsIds) {
@@ -165,6 +169,30 @@ export const useChatroomStore = defineStore({
 				console.error('Failed to create chatroom or update track:', error);
 				throw error; // Re-throw the error if you want to handle it further up the call stack
 			}
+		},
+
+		async hasUnreadMessage(chatroomId) {
+			const sessionStore = useSessionStore();
+			const messages = await this.fetchMessages(chatroomId);
+			return messages.some(message => message.user_id !== sessionStore.getUserId && message.read === false);
+		},
+
+		async setUnreadChatrooms() {
+			const unreadChatrooms = await Promise.all(this.chatrooms.map(async (chatroom) => {
+				const hasUnread = await this.hasUnreadMessage(chatroom.id);
+				return hasUnread ? chatroom.id : null;
+			}))
+			this.unreadChatrooms = unreadChatrooms.filter(element => element !== null)
+		},
+
+		addUnreadChatroom(chatroomId) {
+			if (!this.unreadChatrooms.includes(chatroomId)) {
+				this.unreadChatrooms.push(chatroomId);
+			}
+		},
+
+		removeUnreadChatroom(chatroomId) {
+			this.unreadChatrooms = this.unreadChatrooms.filter(id => id !== chatroomId)
 		}
 	}
 });

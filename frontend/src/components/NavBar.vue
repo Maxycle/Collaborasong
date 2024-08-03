@@ -1,7 +1,9 @@
 <template>
-	<div class="flex justify-between px-4 items-center bg-gradient-to-r from-neutral-400 to-neutral-300 shadow-md shadow-gray-700">
+	<div
+		class="flex justify-between px-4 items-center bg-gradient-to-r from-neutral-400 to-neutral-300 shadow-md shadow-gray-700">
 		<div>{{ $t('home.logIn.welcome') }} {{ loggedInUser.username }} you muzzafucka !!</div>
 		<div class="flex justify-end space-x-2">
+			<div>{{ chatroomStore.getUnreadChatrooms }}</div>
 			<NavBarButton :isActive="isRouteActive('/')">
 				<span class="relative"><router-link to="/">Home</router-link></span>
 			</NavBarButton>
@@ -22,16 +24,17 @@
 </template>
 
 <script setup>
-import axios from 'axios';
-import NavBarButton from './buttons/NavBarButton.vue';
-import { useRoute, useRouter } from 'vue-router';
-import { ref, computed } from 'vue';
-import { useSessionStore } from '@/stores/modules/sessionStore';
+import axios from 'axios'
+import NavBarButton from './buttons/NavBarButton.vue'
+import { useRoute, useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { useSessionStore } from '@/stores/modules/sessionStore'
+import { useChatroomStore } from "@/stores/modules/chatroomStore"
 
-const store = useSessionStore();
-const router = useRouter();
-const route = useRoute();
-const isLoading = ref(false)
+const store = useSessionStore()
+const router = useRouter()
+const route = useRoute()
+const chatroomStore = useChatroomStore()
 
 axios.defaults.baseURL = 'http://localhost:3000'
 
@@ -54,5 +57,5 @@ const logout = async () => {
 
 const redirectToEditProfile = () => {
 	window.location.href = '/users/edit';
-};
+}
 </script>
