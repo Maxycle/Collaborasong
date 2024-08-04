@@ -15,7 +15,13 @@
 				</nav>
 			</div>
 		</div>
-		<Conversation class="w-full" :key="refreshKey" />
+		<transition mode="out-in" name="fade-to-black" @before-leave="showOverlay" @after-leave="hideOverlay"
+			@before-enter="showOverlay" @after-enter="hideOverlay">
+			<Conversation class="w-full" :key="refreshKey" />
+		</transition>
+		<transition name="fade-overlay">
+			<div v-if="overlayVisible" class="overlay"></div>
+		</transition>
 	</div>
 </template>
 
@@ -32,6 +38,7 @@ const sessionStore = useSessionStore()
 const chatroomList = ref([])
 const refreshKey = ref(0)
 const chatroomSelected = ref(undefined)
+const overlayVisible = ref(false)
 
 const moveToChatroom = async id => {
 	chatroomSelected.value = id
@@ -58,5 +65,11 @@ const chatter = (protagonistsIds) => {
 	return chatroomStore.getUzers.find(user => user.id === chatterId);
 }
 
+const showOverlay = () => {
+	overlayVisible.value = true;
+}
 
+const hideOverlay = () => {
+	overlayVisible.value = false;
+}
 </script>

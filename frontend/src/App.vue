@@ -6,7 +6,15 @@
 			</ul>
 		</div>
 		<div class="grow overflow-hidden">
-			<router-view></router-view>
+			<router-view v-slot="{ Component }">
+				<transition name="fade-to-black" mode="out-in" @before-leave="showOverlay" @after-leave="hideOverlay"
+					@before-enter="showOverlay" @after-enter="hideOverlay">
+					<component :is="Component" />
+				</transition>
+			</router-view>
+			<transition name="fade-overlay">
+				<div v-if="overlayVisible" class="overlay"></div>
+			</transition>
 		</div>
 	</div>
 </template>
@@ -21,8 +29,7 @@ import { useChatroomStore } from "@/stores/modules/chatroomStore"
 const sessionStore = useSessionStore()
 const chatroomStore = useChatroomStore()
 const actionCableConsumer = createConsumer("ws://localhost:3000/cable")
-const notifications = ref([])
-
+const overlayVisible = ref(false)
 let channel
 
 const subscribeToNotifications = () => {
@@ -31,10 +38,10 @@ const subscribeToNotifications = () => {
 		{ channel: "NotificationsChannel", user_id: userId },
 		{
 			async received(data) {
+				console.log('received(data)', data.chatroom_id)
 				const hasUnread = await chatroomStore.hasUnreadMessage(data.chatroom_id)
-				console.log('unRead ??', hasUnread)
+				console.log('hasUnread', hasUnread)
 				if (hasUnread) {
-					// unreadChatrooms.value.push(data.chatroom_id)
 					chatroomStore.addUnreadChatroom(data.chatroom_id)
 				}
 			},
@@ -50,12 +57,12 @@ const subscribeToNotifications = () => {
 
 onMounted(async () => {
 	await chatroomStore.chatroomsIndex();
+	subscribeToNotifications()
 
 	watch(
 		() => sessionStore.getUserId,
 		async (newUserId) => {
 			if (newUserId) {
-				subscribeToNotifications()
 				await chatroomStore.chatroomsIndex()
 				await chatroomStore.setUnreadChatrooms()
 			}
@@ -71,11 +78,14 @@ onMounted(async () => {
 	)
 })
 
+const showOverlay = () => {
+	overlayVisible.value = true;
+}
 
+const hideOverlay = () => {
+	overlayVisible.value = false;
+}
 
 onBeforeUnmount(() => channel.unsubscribe())
 
-watchEffect(() => {
-	console.log('chatroomStore.getChatrooms value:', chatroomStore.getChatrooms)
-})
 </script>

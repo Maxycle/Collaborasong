@@ -59,7 +59,7 @@ const subscribeToChannel = () => {
 				try {
 					messages.value.push(data)
 					await markAsRead(chatroomStore.getChatroomId)
-					console.log('last message after MAR', chatroomStore.getMessages[chatroomStore.getMessages.length - 1])
+					chatroomStore.removeUnreadChatroom(chatroomStore.getChatroomId)
 				} catch (error) {
 					console.error('Error in received callback:', error)
 				} finally {
@@ -102,7 +102,7 @@ onMounted(() => {
 		() => chatroomStore.getChatroomId,
 		async (newChatroomId) => {
 			if (newChatroomId) {
-				chatroomStore.removeUnreadChatroom(chatroomStore.getChatroomId)
+				chatroomStore.removeUnreadChatroom(newChatroomId)
 				await markAsRead(newChatroomId)
 			}
 		},
