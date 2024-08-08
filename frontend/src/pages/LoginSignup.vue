@@ -1,23 +1,5 @@
 <template>
   <div id="home">
-    <!-- <div class="logos">
-      <a href="https://guides.rubyonrails.org/" target="_blank">
-        <img src="/img/rails.png" class="logo" alt="Rails logo">
-      </a>
-
-      <a href="https://vitejs.dev" target="_blank" class="vite">
-        <img src="/img/vite.svg" class="logo" alt="Vite logo">
-      </a>
-
-      <a href="https://vuejs.org/" target="_blank" class="vue">
-        <img src="/img/vue.svg" class="logo" alt="Vue logo">
-      </a>
-
-      <a href="https://pinia.vuejs.org/" target="_blank" class="pinia">
-        <img src="/img/pinia.svg" class="logo" alt="Pinia logo">
-      </a>
-    </div> -->
-
     <div class="form">
       <UserForm />
     </div>

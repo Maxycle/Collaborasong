@@ -38,6 +38,7 @@ class TracksController < ApplicationController
 		@genres = @track.genres.select(:id, :name)
     @instruments = @track.instruments.select(:id, :name)
     author = @track.user
+		@audio_file_attached = @track.audio_file_attached?
 		@author = {
 			id: author.id,
 			username: author.username,
@@ -64,7 +65,9 @@ class TracksController < ApplicationController
 			longitude: @longitutde,
 			latitude: @latitude,
 			children: @children,
-			chat_id: @track.chat_id
+			chat_id: @track.chat_id,
+			audio_file_url: @track.audio_file.attached? ? url_for(@track.audio_file) : nil,
+			audio_file_attached: @audio_file_attached
 		}
   end
 
@@ -73,19 +76,13 @@ class TracksController < ApplicationController
   end
 
   def create
-    @track = Track.new(track_params)
+		music_track_params = track_params
+  	music_track_params[:audio_file] = nil if music_track_params[:audio_file] == "null"
+
+    @track = Track.new(music_track_params)
 		@track.user_id = current_user.id
 
     if @track.save
-			params[:music_track][:instrument_ids].each do |instrument_id|
-				instrument = Instrument.find_by(id: instrument_id)
-				@track.instruments << instrument if instrument.present?
-			end
-
-			params[:music_track][:music_genre_ids].each do |genre_id|
-				genre = Genre.find_by(id: genre_id)
-				@track.genres << genre if genre.present?
-			end
       render json: @track, status: :created
     else
       render json: @track.errors, status: :unprocessable_entity
@@ -103,6 +100,10 @@ class TracksController < ApplicationController
     else
       render json: @track.errors, status: :unprocessable_entity
     end
+	rescue => e
+		Rails.logger.error("Error creating track: #{e.message}")
+		Rails.logger.error(e.backtrace.join("\n"))
+		render json: { error: 'Internal Server Error' }, status: :internal_server_error
   end
 
   def destroy
@@ -111,6 +112,6 @@ class TracksController < ApplicationController
   private
 
   def track_params
-		params.require(:music_track).permit(:title, :parent_id, :longitude, :latitude, :chat_id)
+		params.require(:music_track).permit(:title, :audio_file, :parent_id, :longitude, :latitude, :chat_id, instrument_ids: [], genre_ids: [])
 	end
 end

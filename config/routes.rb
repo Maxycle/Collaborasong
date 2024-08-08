@@ -11,6 +11,9 @@ Rails.application.routes.draw do
 
 	resources :chatrooms, only: %i[index create] do
     resources :messages, only: %i[index create]
+		member do
+			post :mark_as_read
+		end
   end
 	resources :tracks
   resources :instruments, only: [:index, :new, :create]
