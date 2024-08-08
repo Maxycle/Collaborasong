@@ -12,7 +12,7 @@
 
 .fade-slide-enter-active,
 .fade-slide-leave-active {
-	@apply transition-all duration-500;
+	@apply transition-all duration-500 ease-in-out;
 }
 
 .fade-slide-enter-from,
@@ -27,7 +27,7 @@
 
 .fade-to-black-enter-active,
 .fade-to-black-leave-active {
-  @apply transition-all duration-500;
+  @apply transition-all duration-500 ease-in-out;
 }
 
 .fade-to-black-enter-from,

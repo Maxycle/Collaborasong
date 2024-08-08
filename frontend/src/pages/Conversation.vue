@@ -12,7 +12,7 @@
 		<div class="bg-gradient-to-r from-neutral-400 to-neutral-300 grow flex flex-col py-4">
 			<div ref="messagesElement" class="grow overflow-y-auto">
 				<!-- eslint-disable-next-line max-len -->
-				<Message v-for="(message, index) in messages" :key="message.id" :message="message"
+				<Message v-for="(message, index) in sortedMessages" :key="message.id" :message="message"
 					:last-message="(index === 0) ? null : chatroomStore.getMessages[index - 1]" class="px-4" />
 			</div>
 			<form @submit.prevent="messagesCreate" class="sticky bottom-2 px-4 flex flex-col">
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, nextTick, onBeforeUnmount, onMounted, watch } from "vue"
+import { ref, nextTick, onBeforeUnmount, onMounted, watch, computed } from "vue"
 import { createConsumer } from "@rails/actioncable"
 import axios from 'axios'
 import { useChatroomStore } from "@/stores/modules/chatroomStore"
@@ -58,6 +58,7 @@ const subscribeToChannel = () => {
 			received: async (data) => {
 				try {
 					messages.value.push(data)
+					messages.value.sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
 					await markAsRead(chatroomStore.getChatroomId)
 					chatroomStore.removeUnreadChatroom(chatroomStore.getChatroomId)
 				} catch (error) {
@@ -93,6 +94,10 @@ const messagesCreate = async () => {
 	await chatroomStore.messagesCreate(newMessage.value)
 	newMessage.value = ""
 }
+
+const sortedMessages = computed(() => {
+  return [...messages.value].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+})
 
 onMounted(() => {
 	messages.value = chatroomStore.getMessages
