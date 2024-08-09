@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, onBeforeUnmount, watchEffect } from "vue"
+import { ref, onMounted, watch, onBeforeUnmount } from "vue"
 import Hero from './components/Hero.vue'
 import { createConsumer } from "@rails/actioncable"
 import { useSessionStore } from "@/stores/modules/sessionStore"
@@ -38,9 +38,7 @@ const subscribeToNotifications = () => {
 		{ channel: "NotificationsChannel", user_id: userId },
 		{
 			async received(data) {
-				console.log('received(data)', data.chatroom_id)
 				const hasUnread = await chatroomStore.hasUnreadMessage(data.chatroom_id)
-				console.log('hasUnread', hasUnread)
 				if (hasUnread) {
 					chatroomStore.addUnreadChatroom(data.chatroom_id)
 				}
@@ -58,7 +56,6 @@ const subscribeToNotifications = () => {
 onMounted(async () => {
 	await chatroomStore.chatroomsIndex();
 	subscribeToNotifications()
-
 	watch(
 		() => sessionStore.getUserId,
 		async (newUserId) => {

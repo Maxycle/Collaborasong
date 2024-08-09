@@ -12,6 +12,10 @@
 			"welcome": "Welcomeuh!"
 		}
 	},
+	"hero": {
+		"lookForProject": "Look for a project",
+		"startCollaboration": "Start a new collaboration"
+	},
 	"trackCard": {
 		"toolTip": "Wriote to ",
 		"badge": {

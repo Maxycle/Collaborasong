@@ -14,11 +14,10 @@
 						<Autocomplete :heading="param.name" @item-selected="addQueryParamToUrl" class="shadow-lg shadow-black" />
 					</div>
 					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-						@click="fetch">Look
-						for a project</button>
+						@click="fetch">{{ t('hero.lookForProject') }}</button>
 					<button
 						class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-4"><router-link
-							to="/new_project" class="">Start a new collaboration</router-link></button>
+							to="/new_project" class="">{{ t('hero.startCollaboration') }}</router-link></button>
 				</dl>
 			</div>
 		</div>
@@ -33,6 +32,7 @@ import { fetchTracks } from '../helpers/requests.js';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 import { useRouter } from 'vue-router';
 import NavBar from './NavBar.vue'
+import { useI18n } from 'vue-i18n'
 
 const searchParams = [
 	{ name: 'Genre de zikmu', value: '12' },
@@ -46,6 +46,7 @@ let genreParam = ref('')
 let locationParam = ref('')
 const router = useRouter()
 const store = useSessionStore()
+const { t } = useI18n()
 
 onMounted(() => {
 	fetchTracks(urlToFetch.value);

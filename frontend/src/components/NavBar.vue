@@ -11,11 +11,15 @@
 			</NavBarButton>
 			<NavBarButton :isActive="isRouteActive('/chat')" class="relative">
 				<span class="relative"><router-link to="/chat">My messages</router-link></span>
-			<FontAwesomeIcon v-if="chatroomStore.getUnreadChatrooms.length" icon="fa-solid fa-envelope" class="text-orange-900 absolute right-2 bottom-0" />
+				<FontAwesomeIcon v-if="chatroomStore.getUnreadChatrooms.length" icon="fa-solid fa-envelope"
+					class="text-orange-900 absolute right-2 bottom-0" />
 			</NavBarButton>
 			<NavBarButton @click="redirectToEditProfile">
 				<span class="relative">Edit profile</span>
 			</NavBarButton>
+			<!-- <NavBarButton> -->
+			<LangSwitch class=""></LangSwitch>
+			<!-- </NavBarButton> -->
 			<NavBarButton @click="logout">
 				<span class="relative">Logout</span>
 			</NavBarButton>
@@ -26,6 +30,7 @@
 <script setup>
 import axios from 'axios'
 import NavBarButton from './buttons/NavBarButton.vue'
+import LangSwitch from './LangSwitch.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useSessionStore } from '@/stores/modules/sessionStore'
