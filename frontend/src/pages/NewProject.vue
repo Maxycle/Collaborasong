@@ -4,8 +4,8 @@
 			<div class="flex justify-center space-x-4 pb-4">
 				<div class="mx-auto max-w-2xl lg:mx-0 lg:max-w-none">
 					<div class="grid grid-cols-4 gap-2 sm:mt-20">
-						<div v-for="label in newProjectParams" :key="label.name">{{ label.name }}</div>
-						<div>Track title</div>
+						<div v-for="label in filterHeaders" :key="label">{{ label }}</div>
+						<div>{{ t('trackTitle') }}</div>
 						<div v-for="param in newProjectParams" :key="param.name">
 							<Autocomplete :heading="param.name" canAddNewOption @item-selected="addParameters"
 								@item-inputted="onNewItemInput" @add-new-option="addNewOption" />
@@ -13,12 +13,12 @@
 						<Autocomplete heading='Track title' @item-selected="addParameters" @item-inputted="onNewItemInput" />
 						<div class="flex flex-wrap mt-2">
 							<div v-for="item in genres" :key="item">
-								<ParamButton :item="item" removable @removed="removeParameters('Genre de zikmu', item)" />
+								<ParamButton :item="item" removable @removed="removeParameters('Music style', item)" />
 							</div>
 						</div>
 						<div class="flex flex-wrap mt-2">
 							<div v-for="item in instruments" :key="item">
-								<ParamButton :item="item" removable @removed="removeParameters('Instrument recherchié', item)" />
+								<ParamButton :item="item" removable @removed="removeParameters('Instrument needed', item)" />
 							</div>
 						</div>
 						<div class="flex flex-wrap mt-2"></div>
@@ -41,11 +41,11 @@
 
 <script setup>
 import axios from 'axios'
-// import axiosCSRF from '@/helpers/axiosCSRF'
+import { useI18n } from 'vue-i18n'
 import Container from '@/components/Container.vue'
 import Autocomplete from '@/components/Autocomplete.vue'
 import ParamButton from '@/components/buttons/ParamButton.vue'
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { fetchTracks, fetchMyTracks } from '@/helpers/requests.js'
 import { useRouter } from 'vue-router';
 import { useSessionStore } from '@/stores/modules/sessionStore';
@@ -56,12 +56,17 @@ const genres = ref([])
 const router = useRouter()
 const store = useSessionStore();
 const audioFile = ref(null);
+const { t } = useI18n()
 
 const newProjectParams = reactive([
-	{ name: 'Genre de zikmu', value: '12' },
-	{ name: 'Instrument recherchié', value: '300+' },
-	{ name: 'Où ca ??', value: '300+' }
+	{ name: 'Music style', value: '12' },
+	{ name: 'Instrument needed', value: '300+' },
+	{ name: 'Location', value: '300+' }
 ])
+
+const filterHeaders = computed(() => {
+ return [t('filters.musicStyle'), t('filters.instrument'), t('filters.location')]
+})
 
 const handleFileUpload = (event) => {
 	audioFile.value = event.target.files[0];
@@ -119,7 +124,7 @@ const createResource = async (endpoint, value, itemsProp) => {
 }
 
 const addNewOption = async (obj) => {
-	if (obj.from === 'Instrument recherchié') {
+	if (obj.from === 'Instrument needed') {
 		await createResource('instruments', obj.newOption, instruments);
 	} else {
 		await createResource('genres', obj.newOption, genres);
@@ -130,12 +135,12 @@ const addNewOption = async (obj) => {
 const addParameters = (obj) => {
 	if (obj.name !== '') {
 		switch (obj.header) {
-			case 'Instrument recherchié':
+			case 'Instrument needed':
 				if (!selectNamesOrIds(instruments.value, 'name').includes(obj.name))
 					instruments.value.push(obj)
 				console.log('instru ids', selectNamesOrIds(instruments.value, 'id'))
 				break;
-			case 'Genre de zikmu':
+			case 'Music style':
 				if (!selectNamesOrIds(genres.value, 'name').includes(obj.name))
 					genres.value.push(obj)
 				console.log('genres ids', selectNamesOrIds(genres.value, 'id'))
@@ -152,13 +157,13 @@ const onNewItemInput = (obj) => {
 
 const removeParameters = (additionalParameter, itemToRemove) => {
 	switch (additionalParameter) {
-		case 'Instrument recherchié':
+		case 'Instrument needed':
 			const instrumentIndex = instruments.value.findIndex(obj => obj.name === itemToRemove.name);
 			if (instrumentIndex !== -1) {
 				instruments.value.splice(instrumentIndex, 1);
 			}
 			break;
-		case 'Genre de zikmu':
+		case 'Music style':
 			const genreIndex = genres.value.findIndex(obj => obj.name === itemToRemove.name);
 			if (genreIndex !== -1) {
 				genres.value.splice(genreIndex, 1);

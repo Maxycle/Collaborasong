@@ -112,7 +112,6 @@ const showMyCollaborationBadge = computed(() => trackData.value.isResult && !isT
 const isMyProject = computed(() => storeSession.getUserId === trackData.value.parent_track_user_id);
 const isMyTrack = computed(() => storeSession.getUserId === authorId.value);
 const showSeeConversationButton = computed(() => isMyProject.value || isMyTrack.value)
-const headers = ref([])
 const writeTo = computed(() => { return trackData.value.author ? `${t('trackCard.toolTip')} ${trackData.value.author.username}` : '' })
 const trackImageUrl = ref('/img/Flag_of_Anarcho-capitalism.png');
 
@@ -121,7 +120,6 @@ const fetchTrackDetails = async () => {
 		const response = await axios.get(`/tracks/${props.trackId}`);
 		trackData.value = response.data;
 		authorId.value = trackData.value.author.id
-		headers.value = trackData.value.isResult ? { instruments: t('trackCard.headers.instrumentsAdded.list', trackData.value.instruments.length), origin: t('trackCard.headers.instrumentsAdded.title', trackData.value.instruments.length) } : { instruments: t('trackCard.headers.instrumentsNeeded.list', trackData.value.instruments.length), origin: t('trackCard.headers.instrumentsNeeded.title', trackData.value.instruments.length) };
 		if (response.data.audio_file_url) {
 			audioFileUrl.value = response.data.audio_file_url;
 		}
@@ -129,6 +127,24 @@ const fetchTrackDetails = async () => {
 		console.error('Error fetching tracks:', error);
 	}
 };
+
+const headers = computed(() => {
+	return trackData.value.isResult && trackData.value.instruments
+		? {
+			instruments: t('trackCard.headers.instrumentsAdded.list', trackData.value.instruments.length),
+			origin: t('trackCard.headers.instrumentsAdded.title', trackData.value.instruments.length)
+		}
+		: trackData.value.instruments
+			? {
+				instruments: t('trackCard.headers.instrumentsNeeded.list', trackData.value.instruments.length),
+				origin: t('trackCard.headers.instrumentsNeeded.title', trackData.value.instruments.length)
+			}
+			: {
+				instruments: '',
+				origin: ''
+			};
+});
+
 
 const sendTrackDetailsToPinia = () => {
 	storeTrack.setTrackBasicData(trackData.value);

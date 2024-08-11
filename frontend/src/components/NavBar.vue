@@ -4,20 +4,24 @@
 		<div>{{ $t('home.logIn.welcome') }} {{ loggedInUser.username }} you muzzafucka !!</div>
 		<div class="flex justify-end space-x-2">
 			<NavBarButton :isActive="isRouteActive('/')">
-				<span class="relative"><router-link to="/">Home</router-link></span>
+				<span class="relative"><router-link to="/">{{ t('navbar.home') }}</router-link></span>
 			</NavBarButton>
 			<NavBarButton :isActive="isRouteActive('/my_own_tracks')">
-				<span class="relative"><router-link to="/my_own_tracks">My tracks</router-link></span>
+				<span class="relative"><router-link to="/my_own_tracks">{{ t('navbar.myTracks') }}</router-link></span>
 			</NavBarButton>
 			<NavBarButton :isActive="isRouteActive('/chat')" class="relative">
-				<span class="relative"><router-link to="/chat">My messages</router-link></span>
-			<FontAwesomeIcon v-if="chatroomStore.getUnreadChatrooms.length" icon="fa-solid fa-envelope" class="text-orange-900 absolute right-2 bottom-0" />
+				<span class="relative"><router-link to="/chat">{{ t('navbar.messages') }}</router-link></span>
+				<FontAwesomeIcon v-if="chatroomStore.getUnreadChatrooms.length" icon="fa-solid fa-envelope"
+					class="text-orange-900 absolute right-2 bottom-0" />
 			</NavBarButton>
 			<NavBarButton @click="redirectToEditProfile">
-				<span class="relative">Edit profile</span>
+				<span class="relative">{{ t('navbar.profileEdit') }}</span>
 			</NavBarButton>
+			<!-- <NavBarButton> -->
+			<LangSwitch class=""></LangSwitch>
+			<!-- </NavBarButton> -->
 			<NavBarButton @click="logout">
-				<span class="relative">Logout</span>
+				<span class="relative">{{ t('navbar.logout') }}</span>
 			</NavBarButton>
 		</div>
 	</div>
@@ -26,15 +30,18 @@
 <script setup>
 import axios from 'axios'
 import NavBarButton from './buttons/NavBarButton.vue'
+import LangSwitch from './LangSwitch.vue'
 import { useRoute, useRouter } from 'vue-router'
 import { computed } from 'vue'
 import { useSessionStore } from '@/stores/modules/sessionStore'
 import { useChatroomStore } from "@/stores/modules/chatroomStore"
+import { useI18n } from 'vue-i18n'
 
 const store = useSessionStore()
 const router = useRouter()
 const route = useRoute()
 const chatroomStore = useChatroomStore()
+const { t } = useI18n()
 
 axios.defaults.baseURL = 'http://localhost:3000'
 

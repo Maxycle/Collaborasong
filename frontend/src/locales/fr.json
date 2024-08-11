@@ -1,4 +1,15 @@
 {
+	"trackTitle": "Nom du morceau",
+	"trackList": {
+		"myTracks": "Mes morceaux",
+		"peopleCollaborations": "Collaborations",
+		"noTracks": "Pas de collaboration pour l'instant"
+	},
+	"filters": {
+		"musicStyle": "Style de musique",
+		"instrument": "Instrument recherché",
+		"location": "Lieu"
+	},
 	"common": {
 		"next": "Suivant",
 		"cancel": "Annuler"
@@ -9,10 +20,43 @@
 			"register": "S'enregistrer"
 		},
 		"logIn": {
-			"welcome": "Bienvenu !!"
+			"welcome": "Bienvenu !"
 		}
 	},
+	"navbar": {
+		"home": "Accueuil",
+		"myTracks": "Mes morceaux",
+		"messages": "Mes messages",
+		"profileEdit": "Editer le profile",
+		"logout": "Déconnecter"
+	},
+	"hero": {
+		"lookForProject": "Chercher un projet",
+		"startCollaboration": "Commencer une nouvelle collaboration"
+	},
 	"trackCard": {
-		"toolTip": "Ecris à "
+		"toolTip": "Ecrire à ",
+		"badge": {
+			"collabo": "a {n} collaboration | a {n} collaborations",
+			"myCollabo": "Ma collaborasound"
+		},
+		"titleOrigin": "de",
+		"headers": {
+			"instrumentsAdded": {
+				"list": "Instrument ajouté | Instruments ajoutés",
+				"title": "instrument ajouté par | instruments ajoutés par"
+			},
+			"instrumentsNeeded": {
+				"list": "Instrument recherché | Instruments recherchés",
+				"title": "de"
+			},
+			"style": "Style de musique | Styles de musique"
+		},
+		"button": {
+			"collaborate": "Collabore",
+			"collaborateToMyOwnTrack": "Collabore sur mon projet",
+			"conversation": "Va à la conversation",
+			"noTrack": "Pas de musique, annonce vide"
+		}
 	}
 }
