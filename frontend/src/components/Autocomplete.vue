@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<div class="relative">
-			<input v-if="heading !== 'Où ca ??'" type="text" id="autocomplete" :placeholder="placeholder"
+			<input v-if="heading !== 'Location'" type="text" id="autocomplete" :placeholder="placeholder"
 				v-model="selectedItem" @input="onInput"
 				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-black bg-neutral-300 focus:bg-green-200" />
 			<input v-else type="text" id="autocomplete" ref="geocoder" :placeholder="placeholder" v-model="geoQuery"
@@ -9,7 +9,7 @@
 				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-black bg-neutral-300 focus:bg-green-200" />
 			<ul v-if="dropdownOptions.length" class="absolute z-10 mt-2 bg-white border rounded shadow-md w-full">
 				<li v-for="item in dropdownOptions" :key="item" @click="selectItem(item)" class="p-4 rounded hover:bg-blue-500">
-					<div v-if="this.heading === 'Où ca ??'">{{ item.place_name }}</div>
+					<div v-if="this.heading === 'Location'">{{ item.place_name }}</div>
 					<div v-else> {{ item.name }}</div>
 				</li>
 			</ul>
@@ -60,7 +60,7 @@ export default {
 
 	computed: {
 		dropdownOptions() {
-			if (this.heading === 'Où ca ??') return this.geocoderResult
+			if (this.heading === 'Location') return this.geocoderResult
 			else return this.filteredItems
 		},
 
@@ -86,7 +86,7 @@ export default {
 		},
 
 		selectItem(item) {
-			if (this.heading === 'Où ca ??') {
+			if (this.heading === 'Location') {
 				this.geoQuery = item.place_name
 				this.coordinates = item.geometry.coordinates
 				this.geocoderResult = []
@@ -112,21 +112,17 @@ export default {
 
 		updateUrlToFetch(heading) {
 			switch (heading) {
-				case 'Instrument recherchié':
+				case 'Instrument needed':
 					this.urlToFetch = '/instruments'
 					this.placeholder = 'Chainsaw'
 					break;
-				case 'Genre de zikmu':
+				case 'Music style':
 					this.urlToFetch = '/genres'
 					this.placeholder = 'Fuck metal'
 					break;
-				case 'Où ca ??':
+				case 'Location':
 					this.urlToFetch = '/genres'
 					this.placeholder = 'Islamaveryverybad'
-					break;
-				case 'Track title':2
-					this.urlToFetch = '/genres'
-					this.placeholder = 'Allah akbar'
 					break;
 				case 'Receiver':
 					this.urlToFetch = '/api/v1/users'

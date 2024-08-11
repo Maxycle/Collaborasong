@@ -6,7 +6,7 @@
 					<div class="grid grid-cols-2 gap-2 mb-2">
 						<div>Instrument(s) added</div>
 						<div></div>
-						<Autocomplete canAddNewOption heading='Instrument recherchié' @item-selected="addParameters"
+						<Autocomplete canAddNewOption heading='Instrument needed' @item-selected="addParameters"
 							@add-new-option="addNewOption" />
 						<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded">Upload
 							your track</button>

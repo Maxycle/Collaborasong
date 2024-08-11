@@ -1,4 +1,15 @@
 {
+	"trackTitle": "Track title",
+	"trackList": {
+		"myTracks": "My tracks",
+		"peopleCollaborations": "People's collaborations",
+		"noTracks": "No tracks available yet"
+	},
+	"filters": {
+		"musicStyle": "Music style",
+		"instrument": "Instrument needed",
+		"location": "Location"
+	},
 	"common": {
 		"next": "Next",
 		"cancel": "Cancel"
@@ -8,9 +19,18 @@
 			"logIn": "Log in",
 			"register": "Register"
 		},
+		"openMap": "See projects on the map",
+		"closeMap": "Close the map",
 		"logIn": {
-			"welcome": "Welcomeuh!"
+			"welcome": "Welcome!"
 		}
+	},
+	"navbar": {
+		"home": "Home",
+		"myTracks": "My tracks",
+		"messages": "My messages",
+		"profileEdit": "Edit profile",
+		"logout": "Logout"
 	},
 	"hero": {
 		"lookForProject": "Look for a project",
@@ -19,7 +39,7 @@
 	"trackCard": {
 		"toolTip": "Wriote to ",
 		"badge": {
-			"collabo":"Has {n} collaboration | Has {n} collaborations",
+			"collabo": "Has {n} collaboration | Has {n} collaborations",
 			"myCollabo": "My collaborasound"
 		},
 		"titleOrigin": "from",
@@ -39,6 +59,6 @@
 			"collaborateToMyOwnTrack": "Collaborate to my own project",
 			"conversation": "Go to conversation",
 			"noTrack": "No track, empty record"
-		} 
+		}
 	}
 }
