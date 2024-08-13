@@ -14,4 +14,14 @@ class Track < ApplicationRecord
 	def audio_file_attached?
     audio_file.attached?
   end
+
+	validate :coordinates_format
+	
+	private
+
+	def coordinates_format
+    if coordinates.present? && coordinates.size != 2
+      errors.add(:coordinates, "must contain exactly two values: [longitude, latitude]")
+    end
+  end
 end

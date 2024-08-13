@@ -2,8 +2,6 @@
 	<div class="flex flex-col h-screen text-orange-900 font-serif">
 		<div class="sticky top-0 z-10">
 			<Hero />
-			<ul class="">
-			</ul>
 		</div>
 		<div class="grow overflow-hidden">
 			<router-view v-slot="{ Component }">

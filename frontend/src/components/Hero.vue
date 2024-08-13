@@ -28,7 +28,7 @@
 <script setup>
 import Autocomplete from './Autocomplete.vue';
 import { ref, onMounted, computed } from 'vue';
-import { fetchTracks } from '../helpers/requests.js';
+import { fetchTracks, fetchMyTracks } from '../helpers/requests.js';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 import { useRouter } from 'vue-router';
 import NavBar from './NavBar.vue'
@@ -50,10 +50,12 @@ const { t } = useI18n()
 
 onMounted(() => {
 	fetchTracks(urlToFetch.value);
+	fetchMyTracks()
 });
 
 const fetch = () => {
 	fetchTracks(urlToFetch.value)
+	fetchMyTracks()
 	router.push('/')
 };
 

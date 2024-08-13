@@ -3,10 +3,11 @@
 		<div class="flex items-center justify-center w-full p-4">
 			<div class="w-4/5">
 				<p v-if="props.isMyTracks" class="text-2xl font-bold flex justify-center">{{ t('trackList.myTracks') }}</p>
-				<p v-else-if="props.isResult" class="text-2xl font-bold flex justify-center">{{ t('trackList.peopleCollaborations') }}</p>
+				<p v-else-if="props.isResult" class="text-2xl font-bold flex justify-center">{{
+					t('trackList.peopleCollaborations') }}</p>
 				<div v-if="currentTrackList.length > 0">
 					<div v-for="track in currentTrackList" :key="track.id" class="">
-						<TrackCard :trackId="track.id" :parentTrackId="trackId" class="w-full my-6" />
+						<TrackCard :trackId="track.id" :parentTrackId="trackId" :isMyTracks="isMyTracks" :isResult="isResult" class="w-full my-6" />
 					</div>
 				</div>
 				<p v-else class="text-center text-gray-500 bg-blue-400">{{ t('trackList.noTracks') }}</p>
@@ -16,10 +17,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue';
+import { ref, watch } from 'vue';
 import axios from 'axios';
 import TrackCard from './TrackCard.vue';
-import { fetchMyTracks } from '../helpers/requests.js';
 import { useTrackStore } from '@/stores/modules/tracks';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 import { useI18n } from 'vue-i18n'
@@ -43,31 +43,24 @@ const props = defineProps({
 
 const storeTrack = useTrackStore();
 const currentTrackList = ref([]);
-const initTrackListExecuted = ref(false);
 const { isLoggedIn, getAuthToken } = useSessionStore();
 
 watch(
-	[() => isLoggedIn, () => storeTrack.loadingData, () => storeTrack.trackListIds, () => storeTrack.myTrackListIds],
-	([loggedIn, loadingData, trackListIds, myTrackListIds]) => {
-		if (loggedIn || (!loadingData && !initTrackListExecuted.value)) {
+	[() => isLoggedIn, () => storeTrack.trackListIds, () => storeTrack.myTrackListIds],
+	([loggedIn, trackListIds, myTrackListIds]) => {
+		if (loggedIn) {
+			console.log('initTrackList')
 			initTrackList();
 		}
-	}
+	},
+	{ immediate: true }
 );
-
-onMounted(() => {
-	initTrackList()
-})
 
 function initTrackList() {
 	if (props.trackId !== undefined) {
 		fetchTrackChildrenIds(props.trackId);
 	} else {
 		currentTrackList.value = props.isMyTracks ? storeTrack.myTrackListIds : storeTrack.trackListIds
-	}
-	if (isLoggedIn && !initTrackListExecuted.value) {
-		fetchMyTracks()
-		initTrackListExecuted.value = true
 	}
 }
 
@@ -80,6 +73,7 @@ async function fetchTrackChildrenIds(trackId) {
 				}
 			});
 		currentTrackList.value = response.data;
+		currentTrackList.value.map((item) => storeTrack.setResultTracks(item.id))
 	} catch (error) {
 		console.error('Error fetching tracks:', error);
 	}

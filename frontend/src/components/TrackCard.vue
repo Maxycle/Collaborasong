@@ -33,14 +33,15 @@
 			<div class="flex justify-center pb-2">
 				<div class="border-b-4 border-anarcapYellow bg-anarcapYellow rounded-xl">
 					<div class="max-w-fit rounded-xl bg-lime-100 border border-black p-2 shadow-md shadow-black">
-						<p v-if="!isTrackPage" class="font-bold text-2xl flex justify-center">{{ trackData.title }}</p>
-						<div v-if="trackData.author && !isMyOwnTracksPage" class="text-lg">{{ headers.origin }} <span
+						<p v-if="!isTrackPage && trackData" class="font-bold text-2xl flex justify-center">{{ trackData.title }}</p>
+						<div v-if="trackData && trackData.author && !isMyOwnTracksPage" class="text-lg">{{ headers.origin }} <span
 								class="font-bold">{{ trackData.author.username }}</span></div>
 					</div>
 				</div>
 			</div>
 			<div class="flex items-center justify-between">
-				<div v-if="trackData.genres" :class="{ 'invisible': !trackData.genres || !trackData.genres.length }">
+				<div v-if="trackData && trackData.genres"
+					:class="{ 'invisible': !trackData.genres || !trackData.genres.length }">
 					<p class="text-center mx-2 font-bold">{{ t('trackCard.headers.style', trackData.genres.length) }}</p>
 					<div v-for="genre in trackData.genres" :key="genre.name">
 						<ParamButton :item="genre" color='blue' class="rounded-full shadow-md shadow-black" />
@@ -59,7 +60,7 @@
 				<button v-else-if="trackData && showSeeConversationButton" class="button-trackcard" @click="goToConversation">
 					{{ t('trackCard.button.conversation') }}
 				</button>
-				<div>
+				<div v-if="trackData">
 					<p class="text-center text-white font-bold">{{ headers.instruments }}</p>
 					<div v-for="instrument in trackData.instruments" :key="instrument.name">
 						<div class="border border-black rounded-full">
@@ -73,8 +74,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import axios from 'axios';
+import { ref, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { useRouter } from "vue-router"
 import { useTrackStore } from '@/stores/modules/tracks';
@@ -95,6 +95,14 @@ const props = defineProps({
 	parentTrackId: {
 		type: Number,
 		default: undefined
+	},
+	isMyTracks: {
+		type: Boolean,
+		default: false
+	},
+	isResult: {
+		type: Boolean,
+		default: false
 	}
 });
 
@@ -107,34 +115,21 @@ const audioFileUrl = ref('')
 
 const isTrackPage = computed(() => route.path === `/track/${props.parentTrackId}`);
 const isMyOwnTracksPage = computed(() => route.path === '/my_own_tracks');
-const showCollaborationBadge = computed(() => trackData.value.children && trackData.value.children.length > 0);
-const showMyCollaborationBadge = computed(() => trackData.value.isResult && !isTrackPage.value);
+const showCollaborationBadge = computed(() => { if (trackData.value) return trackData.value.children && trackData.value.children.length > 0 });
+const showMyCollaborationBadge = computed(() => { if (trackData.value) return trackData.value.isResult && !isTrackPage.value });
 const isMyProject = computed(() => storeSession.getUserId === trackData.value.parent_track_user_id);
 const isMyTrack = computed(() => storeSession.getUserId === authorId.value);
 const showSeeConversationButton = computed(() => isMyProject.value || isMyTrack.value)
-const writeTo = computed(() => { return trackData.value.author ? `${t('trackCard.toolTip')} ${trackData.value.author.username}` : '' })
+const writeTo = computed(() => { return trackData.value && trackData.value.author ? `${t('trackCard.toolTip')} ${trackData.value.author.username}` : '' })
 const trackImageUrl = ref('/img/Flag_of_Anarcho-capitalism.png');
 
-const fetchTrackDetails = async () => {
-	try {
-		const response = await axios.get(`/tracks/${props.trackId}`);
-		trackData.value = response.data;
-		authorId.value = trackData.value.author.id
-		if (response.data.audio_file_url) {
-			audioFileUrl.value = response.data.audio_file_url;
-		}
-	} catch (error) {
-		console.error('Error fetching tracks:', error);
-	}
-};
-
 const headers = computed(() => {
-	return trackData.value.isResult && trackData.value.instruments
+	return trackData.value && trackData.value.isResult && trackData.value.instruments
 		? {
 			instruments: t('trackCard.headers.instrumentsAdded.list', trackData.value.instruments.length),
 			origin: t('trackCard.headers.instrumentsAdded.title', trackData.value.instruments.length)
 		}
-		: trackData.value.instruments
+		: trackData.value && trackData.value.instruments
 			? {
 				instruments: t('trackCard.headers.instrumentsNeeded.list', trackData.value.instruments.length),
 				origin: t('trackCard.headers.instrumentsNeeded.title', trackData.value.instruments.length)
@@ -183,7 +178,46 @@ const goToConversationWithAuthorOfTrack = async () => {
 	}
 }
 
-onMounted(() => {
-	fetchTrackDetails();
-})
+watch(
+	() => storeTrack.resultTracks,
+	async (newResultTracks) => {
+		if (await newResultTracks && newResultTracks.length > 0 && props.isResult) {
+			console.log('results watcher resultTracks', storeTrack.resultTracks, 'results watcher newResultTracks', newResultTracks, 'trackID =>', props.trackId)
+			const foundTrack = newResultTracks.find(track => track.id === props.trackId);
+			if (foundTrack) {
+				trackData.value = foundTrack;
+				authorId.value = trackData.value.author?.id;
+			} else {
+				console.log(`Track with id ${props.trackId} not found in newResultTracks`);
+			}
+		}
+	},
+	{ immediate: true, deep: true }
+)
+
+watch(
+	() => storeTrack.filteredTracks,
+	(newFilteredTracks) => {
+		if (newFilteredTracks && newFilteredTracks.length > 0 && !props.isMyTracks) {
+			trackData.value = newFilteredTracks.find(track => track.id === props.trackId);
+			if (trackData.value) {
+				authorId.value = trackData.value.author?.id;
+			}
+		}
+	},
+	{ immediate: true }
+)
+
+watch(
+	() => storeTrack.myTracks,
+	(myNewTracks) => {
+		if (myNewTracks && myNewTracks.length > 0 && props.isMyTracks) {
+			trackData.value = myNewTracks.find(track => track.id === props.trackId);
+			if (trackData.value) {
+				authorId.value = trackData.value.author?.id;
+			}
+		}
+	},
+	{ immediate: true }
+);
 </script>

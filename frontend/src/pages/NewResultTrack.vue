@@ -60,7 +60,7 @@ const createTrack = async () => {
 			music_track: {
 				title: storeTrack.trackBasicData.title,
 				instrument_ids: instrumentsList.value.map(item => item.id),
-				music_genre_ids: storeTrack.trackBasicData.genres.map(item => item.id),
+				genre_ids: storeTrack.trackBasicData.genres.map(item => item.id),
 				parent_id: trackId.value
 			}
 		},

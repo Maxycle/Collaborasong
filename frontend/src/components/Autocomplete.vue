@@ -87,8 +87,8 @@ export default {
 
 		selectItem(item) {
 			if (this.heading === 'Location') {
-				this.geoQuery = item.place_name
-				this.coordinates = item.geometry.coordinates
+				this.coordinates = item.center
+				this.geoQuery = ''
 				this.geocoderResult = []
 				this.$emit('item-selected', { header: this.heading, coordinates: this.coordinates })
 			} else {

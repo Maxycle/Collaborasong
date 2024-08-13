@@ -51,6 +51,7 @@ import { useRouter } from 'vue-router';
 import { useSessionStore } from '@/stores/modules/sessionStore';
 
 const trackTitle = ref('')
+const coordinates = ref([])
 const instruments = ref([])
 const genres = ref([])
 const router = useRouter()
@@ -65,7 +66,7 @@ const newProjectParams = reactive([
 ])
 
 const filterHeaders = computed(() => {
- return [t('filters.musicStyle'), t('filters.instrument'), t('filters.location')]
+	return [t('filters.musicStyle'), t('filters.instrument'), t('filters.location')]
 })
 
 const handleFileUpload = (event) => {
@@ -80,9 +81,12 @@ const createTrack = async () => {
 		formData.append('music_track[instrument_ids][]', id);
 	});
 
-	// Append each genre ID individually
 	selectNamesOrIds(genres.value, 'id').forEach(id => {
 		formData.append('music_track[genre_ids][]', id);
+	});
+
+	coordinates.value.forEach(coordinate => {
+		formData.append('music_track[coordinates][]', coordinate);
 	});
 
 	formData.append('music_track[audio_file]', audioFile.value);
@@ -145,6 +149,8 @@ const addParameters = (obj) => {
 					genres.value.push(obj)
 				console.log('genres ids', selectNamesOrIds(genres.value, 'id'))
 				break;
+			case 'Location':
+				coordinates.value = obj.coordinates
 			default:
 				console.log('default !!!!!!');
 		}

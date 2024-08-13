@@ -13,6 +13,15 @@ class TracksController < ApplicationController
       @tracks = @tracks.joins(:genres).where("genres.name LIKE ?", "%#{params[:genre]}%")
     end
 
+		if params[:location].present?
+      latitude, longitude = params[:location].split(',')
+      @tracks = @tracks.order(Arel.sql("earth_distance(ll_to_earth(coordinates[1], coordinates[0]), ll_to_earth(#{latitude}, #{longitude})) ASC"))
+    end
+		
+		if params[:instrument].blank? && params[:genre].blank? && params[:location].blank?
+      @tracks = @tracks.limit(5)
+    end
+
     @tracks = @tracks.select(:id)
     render json: @tracks
   end  
@@ -48,8 +57,6 @@ class TracksController < ApplicationController
 		@parent_track_user_id = @track.parent ? @track.parent.user.id : nil
 
     @result = !@track.parent_id.nil?
-		# @longitutde = @track.longitude
-		# @latitude = @track.latitude
 		@children = @track.child_tracks
 
     render json: {
@@ -62,8 +69,7 @@ class TracksController < ApplicationController
       instruments: @instruments,
       isResult: @result,
 			parent_track_user_id: @parent_track_user_id,
-			longitude: @longitutde,
-			latitude: @latitude,
+			coordinates: @track.coordinates,
 			children: @children,
 			chat_id: @track.chat_id,
 			audio_file_url: @track.audio_file.attached? ? url_for(@track.audio_file) : nil,
@@ -112,6 +118,6 @@ class TracksController < ApplicationController
   private
 
   def track_params
-		params.require(:music_track).permit(:title, :audio_file, :parent_id, :longitude, :latitude, :chat_id, instrument_ids: [], genre_ids: [])
+		params.require(:music_track).permit(:title, :audio_file, :parent_id, :chat_id, coordinates: [], instrument_ids: [], genre_ids: [])
 	end
 end
