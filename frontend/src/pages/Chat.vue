@@ -49,12 +49,9 @@ const moveToChatroom = async id => {
 	refreshKey.value++
 }
 
-onMounted(async () => {
-	await chatroomStore.chatroomsIndex()
+onMounted(() => {
 	chatroomList.value = chatroomStore.getChatrooms
 	chatroomSelected.value = chatroomList.value[0].id
-	await chatroomStore.updateChatroomId(chatroomSelected.value)
-	refreshKey.value++
 })
 
 const conversationTitle = (chatroom) => {

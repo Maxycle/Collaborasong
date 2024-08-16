@@ -1,8 +1,8 @@
 <template>
-	<div class="relative isolate w-full hover:font-sans hover:text-black hover:scale-110 transition duration-300">
+	<div class="relative isolate w-full hover:font-sans hover:text-black hover:scale-105 transition duration-300 p-4">
 		<img :src="trackImageUrl" alt="Track Image"
 			class="absolute inset-0 -z-10 h-full w-full object-fill md:object-center rounded-2xl" />
-		<div v-if="!isMyOwnTracksPage && !isMyTrack" class="absolute top-4 left-4">
+		<div v-if="!isMyOwnTracksPage && !isMyTrack" class="absolute top-4 left-4 z-10">
 			<div class="flex item-center justify-center">
 				<v-tooltip :text="writeTo">
 					<template v-slot:activator="{ props }">
@@ -29,43 +29,49 @@
 				}}</div>
 			</div>
 		</div>
-		<div class="p-4 rounded-2xl shadow-lg shadow-zinc-600">
-			<div class="flex justify-center pb-2">
-				<div class="border-b-4 border-anarcapYellow bg-anarcapYellow rounded-xl">
-					<div class="max-w-fit rounded-xl bg-lime-100 border border-black p-2 shadow-md shadow-black">
-						<p v-if="!isTrackPage && trackData" class="font-bold text-2xl flex justify-center">{{ trackData.title }}</p>
-						<div v-if="trackData && trackData.author && !isMyOwnTracksPage" class="text-lg">{{ headers.origin }} <span
-								class="font-bold">{{ trackData.author.username }}</span></div>
-					</div>
+		<div class="flex justify-center pb-2 relative">
+			<div class="border-b-4 border-anarcapYellow bg-anarcapYellow rounded-xl">
+				<div class="max-w-fit rounded-xl bg-lime-100 border border-black p-2 shadow-md shadow-black"
+					@mouseenter="showDescription" @mouseleave="hideDescription">
+					<p v-if="!isTrackPage && trackData" class="font-bold text-2xl flex justify-center">{{ trackData.title }}
+					</p>
+					<div v-if="trackData && trackData.author && !isMyOwnTracksPage" class="text-lg">{{ headers.origin }} <span
+							class="font-bold">{{ trackData.author.username }}</span></div>
 				</div>
 			</div>
-			<div class="flex items-center justify-between">
-				<div v-if="trackData && trackData.genres"
-					:class="{ 'invisible': !trackData.genres || !trackData.genres.length }">
-					<p class="text-center mx-2 font-bold">{{ t('trackCard.headers.style', trackData.genres.length) }}</p>
-					<div v-for="genre in trackData.genres" :key="genre.name">
-						<ParamButton :item="genre" color='blue' class="rounded-full shadow-md shadow-black" />
-					</div>
+			<transition name="fade-slide">
+				<div v-if="displayDescription && trackData.description"
+					class="bg-orange-300 rounded-lg p-2 absolute -top-10 inset-x-0 shadow-md shadow-black">
+					{{
+						trackData.description }}
 				</div>
-				<div v-if="audioFileUrl" class="button-audio">
-					<audio controls :src="audioFileUrl" class="rounded-full bg-lime-100"></audio>
+			</transition>
+		</div>
+		<div class="flex items-center justify-between">
+			<div v-if="trackData && trackData.genres" :class="{ 'invisible': !trackData.genres || !trackData.genres.length }">
+				<p class="text-center mx-2 font-bold">{{ t('trackCard.headers.style', trackData.genres.length) }}</p>
+				<div v-for="genre in trackData.genres" :key="genre.name">
+					<ParamButton :item="genre" color='blue' class="rounded-full shadow-md shadow-black" />
 				</div>
-				<div v-else class="button-trackcard">
-					{{ t('trackCard.button.noTrack') }}</div>
-				<button v-if="trackData && !trackData.isResult" class="button-trackcard">
-					<router-link :to="{ name: 'track', params: { zeTrackId: trackId } }" @click="sendTrackDetailsToPinia">{{
-						isMyTrack ? t('trackCard.button.collaborateToMyOwnTrack') : t('trackCard.button.collaborate')
-					}}</router-link>
-				</button>
-				<button v-else-if="trackData && showSeeConversationButton" class="button-trackcard" @click="goToConversation">
-					{{ t('trackCard.button.conversation') }}
-				</button>
-				<div v-if="trackData">
-					<p class="text-center text-white font-bold">{{ headers.instruments }}</p>
-					<div v-for="instrument in trackData.instruments" :key="instrument.name">
-						<div class="border border-black rounded-full">
-							<ParamButton :item="instrument" color="blue" border-color="blue" class="rounded-full" />
-						</div>
+			</div>
+			<div v-if="audioFileUrl" class="button-audio">
+				<audio controls :src="audioFileUrl" class="rounded-full bg-lime-100"></audio>
+			</div>
+			<div v-else class="button-trackcard">
+				{{ t('trackCard.button.noTrack') }}</div>
+			<button v-if="trackData && !trackData.isResult" class="button-trackcard">
+				<router-link :to="{ name: 'track', params: { zeTrackId: trackId } }" @click="sendTrackDetailsToPinia">{{
+					isMyTrack ? t('trackCard.button.collaborateToMyOwnTrack') : t('trackCard.button.collaborate')
+				}}</router-link>
+			</button>
+			<button v-else-if="trackData && showSeeConversationButton" class="button-trackcard" @click="goToConversation">
+				{{ t('trackCard.button.conversation') }}
+			</button>
+			<div v-if="trackData">
+				<p class="text-center text-white font-bold">{{ headers.instruments }}</p>
+				<div v-for="instrument in trackData.instruments" :key="instrument.name">
+					<div class="border border-black rounded-full">
+						<ParamButton :item="instrument" color="blue" border-color="blue" class="rounded-full" />
 					</div>
 				</div>
 			</div>
@@ -112,6 +118,7 @@ const storeChatroom = useChatroomStore()
 const trackData = ref({});
 const authorId = ref()
 const audioFileUrl = ref('')
+const displayDescription = ref(false)
 
 const isTrackPage = computed(() => route.path === `/track/${props.parentTrackId}`);
 const isMyOwnTracksPage = computed(() => route.path === '/my_own_tracks');
@@ -159,7 +166,13 @@ const goToConversation = async () => {
 	})
 };
 
+const kruuugh = () => {
+	alert('kruuugh clicked!');
+	console.log('ça marche')
+}
+
 const goToConversationWithAuthorOfTrack = async () => {
+	console.log('goToConversationWithAuthorOfTrack')
 	if (storeSession.getUserId) {
 		await storeChatroom.chatroomsIndex()
 		const chatrooms = storeChatroom.getChatrooms
@@ -176,6 +189,14 @@ const goToConversationWithAuthorOfTrack = async () => {
 			}
 		})
 	}
+}
+
+const showDescription = (event) => {
+	displayDescription.value = true
+}
+
+const hideDescription = (event) => {
+	displayDescription.value = false
 }
 
 watch(

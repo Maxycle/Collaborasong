@@ -10,8 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_08_11_134447) do
+ActiveRecord::Schema[7.0].define(version: 2024_08_15_171908) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "cube"
+  enable_extension "earthdistance"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -112,6 +114,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_08_11_134447) do
     t.datetime "updated_at", null: false
     t.integer "chat_id"
     t.float "coordinates", default: [], array: true
+    t.text "description"
     t.index ["user_id"], name: "index_tracks_on_user_id"
   end
 

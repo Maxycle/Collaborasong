@@ -11,7 +11,8 @@ export const useTrackStore = defineStore({
 		myTrackListIdsInStore: [],
 		myTrackListInStore: [],
 		trackBasicDataInStore: {},
-		resultTracksInStore: []
+		resultTracksInStore: [],
+		mapCenterInStore: []
 	}),
 
 	actions: {
@@ -77,6 +78,10 @@ export const useTrackStore = defineStore({
 				console.error('Error fetching tracks in store:', error);
 				throw error;
 			}
+		},
+
+		setMapCenter(coordinates) {
+			this.mapCenterInStore = coordinates
 		}
 	},
 
@@ -86,6 +91,7 @@ export const useTrackStore = defineStore({
 		trackBasicData: (state) => state.trackBasicDataInStore,
 		myTrackListIds: (state) => state.myTrackListIdsInStore,
 		myTracks: (state) => state.myTrackListInStore,
-		resultTracks: (state) => state.resultTracksInStore
+		resultTracks: (state) => state.resultTracksInStore,
+		mapCenter: (state) => state.mapCenterInStore
 	}
 });

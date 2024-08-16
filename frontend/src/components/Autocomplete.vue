@@ -3,10 +3,10 @@
 		<div class="relative">
 			<input v-if="heading !== 'Location'" type="text" id="autocomplete" :placeholder="placeholder"
 				v-model="selectedItem" @input="onInput"
-				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-black bg-neutral-300 focus:bg-green-200" />
+				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-zinc-600 bg-neutral-300 focus:bg-green-200" />
 			<input v-else type="text" id="autocomplete" ref="geocoder" :placeholder="placeholder" v-model="geoQuery"
 				@input="handleInputGeocoder"
-				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-black bg-neutral-300 focus:bg-green-200" />
+				class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-zinc-600 bg-neutral-300 focus:bg-green-200" />
 			<ul v-if="dropdownOptions.length" class="absolute z-10 mt-2 bg-white border rounded shadow-md w-full">
 				<li v-for="item in dropdownOptions" :key="item" @click="selectItem(item)" class="p-4 rounded hover:bg-blue-500">
 					<div v-if="this.heading === 'Location'">{{ item.place_name }}</div>
@@ -88,7 +88,7 @@ export default {
 		selectItem(item) {
 			if (this.heading === 'Location') {
 				this.coordinates = item.center
-				this.geoQuery = ''
+				this.geoQuery = item.place_name
 				this.geocoderResult = []
 				this.$emit('item-selected', { header: this.heading, coordinates: this.coordinates })
 			} else {
@@ -144,7 +144,7 @@ export default {
 			try {
 				const response = await axios.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${this.geoQuery}.json?access_token=pk.eyJ1Ijoia2ViYWJhY29vbCIsImEiOiJjbHQ1bnVoN3QwMmdnMmxzMGppenlja3VvIn0.IFeRK3uh56z33cdb--8Nbw`)
 				this.geocoderResult = response.data.features
-				console.log('in ze geocoder', this.geocoderResult)
+				console.log('in ze geocoder', this.geocoderResult, 'heading =>', this.heading)
 			} catch (error) {
 				console.error('Error fetching tracks:', error)
 			}

@@ -1,12 +1,20 @@
 <template>
 	<div v-if="mapboxAccessToken !== 'no tok'">
+		<div v-if="trackCardDisplayed" class="">
+			<TrackCard :trackId="trackCardDisplayed" class="mb-2" :key="refreshKey" />
+		</div>
 		<MapboxMap :access-token="mapboxAccessToken" style="height: 400px" map-style="mapbox://styles/mapbox/streets-v11"
-			:center="mapCenter" :zoom="1">
-			<MapboxMarker :lng-lat="[0, 0]" />
-			<MapboxMarker :lng-lat="[55, 1]" />
-			<!-- <MapboxPopup :lng-lat="[0, 0]" class="bg-red-300">
-      <p>{{ kruughEtSaReum }}</p>
-    </MapboxPopup> -->
+			:center="mapCenter" :zoom="10">
+			<div v-for="track in storeTrack.filteredTracks">
+				<MapboxMarker v-if="track.coordinates.length" :lng-lat="track.coordinates" popup class="">
+					<template v-slot:popup>
+						<div class="cursor-pointer" @click="toggleTrackCard(track.id)">
+							<p>Click to {{ trackCardDisplayed === track.id ? 'close' : 'open' }}</p>
+							<p class="font-extrabold italic">"{{ track.title }}"</p>
+						</div>
+					</template>
+				</MapboxMarker>
+			</div>
 		</MapboxMap>
 	</div>
 	<div v-else>
@@ -15,19 +23,32 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import { MapboxMap, MapboxMarker, MapboxPopup } from '@studiometa/vue-mapbox-gl';
+import { ref, computed, onMounted, watch } from 'vue';
+import { MapboxMap, MapboxMarker } from '@studiometa/vue-mapbox-gl';
 import { useTrackStore } from '@/stores/modules/tracks';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import TrackCard from '@/components/TrackCard.vue';
 
 const mapboxAccessToken = ref("no tok");
-const mapCenter = ref([0, 0]);
-const kruughEtSaReum = computed(() => 'mange ton chien');
 const storeTrack = useTrackStore();
+const trackCardDisplayed = ref(undefined)
+const refreshKey = ref(0)
 
 onMounted(() => {
-	console.log('Environment Variables:', import.meta.env);
 	mapboxAccessToken.value = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN
-	console.log('tok tok token =>', mapboxAccessToken.value)
 })
+
+const mapCenter = computed(() => storeTrack.mapCenter.length === 2 ? storeTrack.mapCenter : [2.35410, 48.86744])
+
+const toggleTrackCard = (id) => {
+	trackCardDisplayed.value = trackCardDisplayed.value !== id ? id : undefined
+	refreshKey.value++
+}
+
+watch(
+	() => storeTrack.filteredTracks,
+	(newFilteredTracks) => {
+		trackCardDisplayed.value = undefined
+	}
+)
 </script>

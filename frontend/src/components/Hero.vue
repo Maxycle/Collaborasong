@@ -11,7 +11,7 @@
 					}}</div>
 					<div></div>
 					<div v-for="param in searchParams" :key="param.name" class="">
-						<Autocomplete :heading="param.name" @item-selected="addQueryParamToUrl" class="shadow-lg shadow-black" />
+						<Autocomplete :heading="param.name" @item-selected="addQueryParamToUrl" />
 					</div>
 					<button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
 						@click="fetch">{{ t('hero.lookForProject') }}</button>
@@ -30,6 +30,7 @@ import Autocomplete from './Autocomplete.vue';
 import { ref, onMounted, computed } from 'vue';
 import { fetchTracks, fetchMyTracks } from '../helpers/requests.js';
 import { useSessionStore } from '@/stores/modules/sessionStore';
+import { useTrackStore } from '@/stores/modules/tracks';
 import { useRouter } from 'vue-router';
 import NavBar from './NavBar.vue'
 import { useI18n } from 'vue-i18n'
@@ -46,6 +47,7 @@ let genreParam = ref('')
 let locationParam = ref('')
 const router = useRouter()
 const store = useSessionStore()
+const storeTrack = useTrackStore();
 const { t } = useI18n()
 
 onMounted(() => {
@@ -73,6 +75,7 @@ const addQueryParamToUrl = (obj) => {
 			break;
 		case 'Location':
 			locationParam.value = obj.coordinates
+			storeTrack.setMapCenter(obj.coordinates)
 			break;
 		default:
 			urlToFetch.value = '/tracks';

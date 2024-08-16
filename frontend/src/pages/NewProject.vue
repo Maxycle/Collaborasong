@@ -22,13 +22,14 @@
 							</div>
 						</div>
 						<div class="flex flex-wrap mt-2"></div>
+						<div class="flex justify-center col-start-2 col-span-2">Write some description for your track</div>
+						<textarea id="description" v-model="description" rows="4"
+							class="py-2 px-4 flex justify-between items-center rounded w-full shadow-md shadow-zinc-600 bg-neutral-300 focus:bg-green-200 col-span-4"
+							placeholder="Enter a detailed description here..."></textarea>
 						<div
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-2 shadow-md shadow-zinc-600">
 							<input type="file" @change="handleFileUpload" required />
 						</div>
-						<!-- <button
-							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 mt-2 shadow-md shadow-zinc-600"
-							@click="createTrack">Upload your track</button> -->
 						<button
 							class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded col-start-2 col-span-2 shadow-md shadow-zinc-600"
 							@click="createTrack">Create project</button>
@@ -58,7 +59,7 @@ const router = useRouter()
 const store = useSessionStore();
 const audioFile = ref(null);
 const { t } = useI18n()
-
+const description = ref('')
 const newProjectParams = reactive([
 	{ name: 'Music style', value: '12' },
 	{ name: 'Instrument needed', value: '300+' },
@@ -76,6 +77,8 @@ const handleFileUpload = (event) => {
 const createTrack = async () => {
 	const formData = new FormData();
 	formData.append('music_track[title]', trackTitle.value);
+
+	formData.append('music_track[description]', description.value);
 
 	selectNamesOrIds(instruments.value, 'id').forEach(id => {
 		formData.append('music_track[instrument_ids][]', id);

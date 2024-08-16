@@ -47,7 +47,6 @@ class TracksController < ApplicationController
 		@genres = @track.genres.select(:id, :name)
     @instruments = @track.instruments.select(:id, :name)
     author = @track.user
-		@audio_file_attached = @track.audio_file_attached?
 		@author = {
 			id: author.id,
 			username: author.username,
@@ -55,7 +54,7 @@ class TracksController < ApplicationController
 			last_name: author.last_name
 		}
 		@parent_track_user_id = @track.parent ? @track.parent.user.id : nil
-
+		@audio_file_attached = @track.audio_file_attached?
     @result = !@track.parent_id.nil?
 		@children = @track.child_tracks
 
@@ -70,6 +69,7 @@ class TracksController < ApplicationController
       isResult: @result,
 			parent_track_user_id: @parent_track_user_id,
 			coordinates: @track.coordinates,
+			description: @track.description,
 			children: @children,
 			chat_id: @track.chat_id,
 			audio_file_url: @track.audio_file.attached? ? url_for(@track.audio_file) : nil,
@@ -118,6 +118,6 @@ class TracksController < ApplicationController
   private
 
   def track_params
-		params.require(:music_track).permit(:title, :audio_file, :parent_id, :chat_id, coordinates: [], instrument_ids: [], genre_ids: [])
+		params.require(:music_track).permit(:title, :description, :audio_file, :parent_id, :chat_id, coordinates: [], instrument_ids: [], genre_ids: [])
 	end
 end

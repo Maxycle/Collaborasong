@@ -7,7 +7,7 @@
 					t('trackList.peopleCollaborations') }}</p>
 				<div v-if="currentTrackList.length > 0">
 					<div v-for="track in currentTrackList" :key="track.id" class="">
-						<TrackCard :trackId="track.id" :parentTrackId="trackId" :isMyTracks="isMyTracks" :isResult="isResult" class="w-full my-6" />
+						<TrackCard :trackId="track.id" :parentTrackId="trackId" :isMyTracks="isMyTracks" :isResult="isResult" class="w-full my-6 shadow-lg shadow-zinc-600 rounded-2xl" />
 					</div>
 				</div>
 				<p v-else class="text-center text-gray-500 bg-blue-400">{{ t('trackList.noTracks') }}</p>

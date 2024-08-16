@@ -18,6 +18,7 @@
 							track/result</router-link></span>
 				</AnarcapButton>
 			</div>
+			<div class="flex justify-center">{{ trackBasicData.description }}</div>
 			<div class="flex justify-center">
 				<TracksList isResult :trackId="trackId" class="justify-center" />
 			</div>

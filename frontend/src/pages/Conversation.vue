@@ -81,7 +81,6 @@ const markAsRead = async (chatroomId) => {
 		if (response.status === 200) {
 			console.log('Marked as read successfully')
 			// Refresh messages from the store to get the latest read status
-			await chatroomStore.messagesIndex()
 		} else {
 			console.error('Failed to mark as read:', response)
 		}
@@ -96,7 +95,7 @@ const messagesCreate = async () => {
 }
 
 const sortedMessages = computed(() => {
-  return [...messages.value].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
+	return [...messages.value].sort((a, b) => new Date(a.created_at) - new Date(b.created_at))
 })
 
 onMounted(() => {
